@@ -26,9 +26,15 @@ export const memberSchema = yup.object({
   lastName: yup.string().required('Last name is required'),
   middleName: yup.string(),
   maidenName: yup.string(),
-  gender: yup.string().oneOf(['Male', 'Female', 'Other', 'PreferNotToSay']),
-  birthDate: yup.date().nullable(),
-  deathDate: yup.date().nullable(),
+  gender: yup.string().oneOf(['Male', 'Female', 'Other', 'PreferNotToSay', '']),
+  birthDate: yup
+    .date()
+    .nullable()
+    .transform((value, originalValue) => (originalValue === '' ? null : value)),
+  deathDate: yup
+    .date()
+    .nullable()
+    .transform((value, originalValue) => (originalValue === '' ? null : value)),
   birthPlace: yup.string(),
   deathPlace: yup.string(),
   vitalStatus: yup.string().oneOf(['Living', 'Deceased', 'Unknown']),

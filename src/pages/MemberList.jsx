@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Grid, List, Search } from 'lucide-react';
-import { useMembers } from '../../hooks/useMembers';
-import { useDebounce } from '../../hooks/useDebounce';
-import { canCreateMember } from '../../utils/permissions';
-import { useAuth } from '../../hooks/useAuth';
-import MemberCard from '../../components/common/MemberCard';
-import LoadingSpinner from '../../components/common/LoadingSpinner';
-import { GENDER_OPTIONS, VITAL_STATUS_OPTIONS } from '../../utils/constants';
+import { useMembers } from '../hooks/useMembers';
+import { useDebounce } from '../hooks/useDebounce';
+import { canCreateMember } from '../utils/permissions';
+import { useAuth } from '../hooks/useAuth';
+import MemberCard from '../components/common/MemberCard';
+import LoadingSpinner from '../components/common/LoadingSpinner';
+import { GENDER_OPTIONS, VITAL_STATUS_OPTIONS } from '../utils/constants';
 
 export default function MemberList() {
   const navigate = useNavigate();
@@ -20,6 +20,8 @@ export default function MemberList() {
     gender: '',
     vitalStatus: '',
   });
+
+  console.log(canAdd);
 
   const debouncedSearch = useDebounce(searchTerm, 300);
 

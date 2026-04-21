@@ -11,8 +11,10 @@ export function useMembers(filters = {}) {
       setLoading(true);
       setError(null);
       const response = await familyAPI.getMembers(filters);
+
       setData(response.data);
     } catch (err) {
+
       setError(err.response?.data?.message || 'Failed to fetch members');
     } finally {
       setLoading(false);

@@ -3,12 +3,12 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ArrowLeft, Save } from 'lucide-react';
-import { useMemberDetail } from '../../hooks/useMemberDetail';
-import { useCreateMember } from '../../hooks/useCreateMember';
-import { useUpdateMember } from '../../hooks/useUpdateMember';
-import { memberSchema } from '../../utils/validation';
-import { GENDER_OPTIONS, VITAL_STATUS_OPTIONS } from '../../utils/constants';
-import LoadingSpinner from '../../components/common/LoadingSpinner';
+import { useMemberDetail } from '../hooks/useMemberDetail';
+import { useCreateMember } from '../hooks/useCreateMember';
+import { useUpdateMember } from '../hooks/useUpdateMember';
+import { memberSchema } from '../utils/validation';
+import { GENDER_OPTIONS, VITAL_STATUS_OPTIONS } from '../utils/constants';
+import LoadingSpinner from '../components/common/LoadingSpinner';
 
 export default function MemberForm() {
   const { id } = useParams();
@@ -62,6 +62,7 @@ export default function MemberForm() {
 
   const onSubmit = async (data) => {
     try {
+      console.log('✅ Form submitted! Data:', data);
       setError('');
       setSuccess('');
 
@@ -75,9 +76,17 @@ export default function MemberForm() {
         setTimeout(() => navigate(`/family/members/${newMember.id}`), 1500);
       }
     } catch (err) {
+      console.error('❌ Error saving member:', err);
       setError(err.message || 'Failed to save member');
     }
   };
+
+  // Debug: Log validation errors
+  useEffect(() => {
+    if (Object.keys(errors).length > 0) {
+      console.log('⚠️ Form validation errors:', errors);
+    }
+  }, [errors]);
 
   if (isEdit && loadingMember) {
     return (
@@ -123,6 +132,17 @@ export default function MemberForm() {
           )}
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+            {/* Debug form state */}
+            {process.env.NODE_ENV === 'development' && Object.keys(errors).length > 0 && (
+              <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <p className="text-sm font-medium text-yellow-800 mb-2">Form Validation Errors:</p>
+                <ul className="text-xs text-yellow-700 list-disc list-inside">
+                  {Object.entries(errors).map(([field, error]) => (
+                    <li key={field}>{field}: {error.message}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
             {/* Basic Information */}
             <div>
               <h2 className="text-xl font-semibold text-gray-900 mb-4">Basic Information</h2>

@@ -1,5 +1,13 @@
 export function isAdmin(user) {
-  return user?.isAdmin === true;
+  if (!user?.roles) return false;
+  
+  // If roles is array of strings (login response)
+  if (typeof user.roles[0] === 'string') {
+    return user.roles.includes("Admin");
+  }
+  
+  // If roles is array of objects (profile response)
+  return user.roles.some(r => r.name === "Admin");
 }
 
 export function canEditMember(user, member) {

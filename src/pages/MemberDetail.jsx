@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Edit, Trash2, ArrowLeft, User, Calendar, MapPin, Briefcase, Mail, Phone } from 'lucide-react';
-import { useMemberDetail } from '../../hooks/useMemberDetail';
-import { useDeleteMember } from '../../hooks/useDeleteMember';
-import { canEditMember, canDeleteMember } from '../../utils/permissions';
-import { useAuth } from '../../hooks/useAuth';
-import { formatDate, formatFullName, calculateAge } from '../../utils/formatters';
-import LoadingSpinner from '../../components/common/LoadingSpinner';
-import StatusBadge from '../../components/common/StatusBadge';
+import { useMemberDetail } from '../hooks/useMemberDetail';
+import { useDeleteMember } from '../hooks/useDeleteMember';
+import { canEditMember, canDeleteMember } from '../utils/permissions';
+import { useAuth } from '../hooks/useAuth';
+import { formatDate, formatFullName, calculateAge } from '../utils/formatters';
+import LoadingSpinner from '../components/common/LoadingSpinner';
+import StatusBadge from '../components/common/StatusBadge';
 
 export default function MemberDetail() {
   const { id } = useParams();
@@ -77,7 +77,7 @@ export default function MemberDetail() {
           <div className="px-8 pb-8">
             <div className="flex flex-col md:flex-row md:items-end md:justify-between -mt-16 mb-6">
               {/* Photo */}
-              <div className="flex items-end gap-6">
+                <div className="flex items-end gap-6">
                 <div className="w-32 h-32 rounded-full border-4 border-white bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center overflow-hidden shadow-lg">
                   {member.photo ? (
                     <img src={member.photo} alt={formatFullName(member)} className="w-full h-full object-cover" />
@@ -85,7 +85,7 @@ export default function MemberDetail() {
                     <User className="w-16 h-16 text-gray-400" />
                   )}
                 </div>
-                <div className="mb-2">
+                <div className="">
                   <h1 className="text-3xl font-bold text-gray-900">
                     {formatFullName(member)}
                   </h1>
