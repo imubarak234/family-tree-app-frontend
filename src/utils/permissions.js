@@ -23,3 +23,19 @@ export function canDeleteMember(user) {
 export function canCreateMember(user) {
   return isAdmin(user); // Only admins can add new members
 }
+
+export function canManageRelationships(user) {
+  return isAdmin(user);
+}
+
+export function canViewRelationships(user) {
+  return !!user;
+}
+
+export function canEditRelationship(user) {
+  return isAdmin(user);
+}
+
+export function canDeleteRelationship(user) {
+  return isAdmin(user);
+}

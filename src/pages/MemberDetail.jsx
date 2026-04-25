@@ -3,11 +3,12 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Edit, Trash2, ArrowLeft, User, Calendar, MapPin, Briefcase, Mail, Phone } from 'lucide-react';
 import { useMemberDetail } from '../hooks/useMemberDetail';
 import { useDeleteMember } from '../hooks/useDeleteMember';
-import { canEditMember, canDeleteMember } from '../utils/permissions';
+import { canEditMember, canDeleteMember, canManageRelationships } from '../utils/permissions';
 import { useAuth } from '../hooks/useAuth';
 import { formatDate, formatFullName, calculateAge } from '../utils/formatters';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import StatusBadge from '../components/common/StatusBadge';
+import RelationshipsList from '../components/relationships/RelationshipsList';
 
 export default function MemberDetail() {
   const { id } = useParams();
@@ -87,7 +88,7 @@ export default function MemberDetail() {
                 </div>
                 <div className="">
                   <h1 className="text-3xl font-bold text-gray-900">
-                    {formatFullName(member)}
+                    {member.title ? `${member.title} ` : ''}{formatFullName(member)}
                   </h1>
                   {member.maidenName && (
                     <p className="text-gray-600 mt-1">(née {member.maidenName})</p>
@@ -236,12 +237,10 @@ export default function MemberDetail() {
 
           {/* Sidebar - Relationships */}
           <div className="space-y-6">
-            <div className="bg-white rounded-xl shadow-md p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">Relationships</h2>
-              <p className="text-gray-600 text-sm">
-                Relationship information coming soon
-              </p>
-            </div>
+            <RelationshipsList
+              memberId={id}
+              canManage={canManageRelationships(user)}
+            />
           </div>
         </div>
 

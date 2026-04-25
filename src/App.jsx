@@ -13,6 +13,9 @@ import Confirm2FA from './pages/auth/Confirm2FA';
 import Profile from './pages/auth/Profile';
 
 // Family Pages
+import Dashboard from './pages/Dashboard';
+import BirthdayPage from './pages/BirthdayPage';
+import FamilyTree from './pages/FamilyTree';
 import MemberList from './pages/MemberList';
 import MemberDetail from './pages/MemberDetail';
 import MemberForm from './pages/MemberForm';
@@ -36,26 +39,7 @@ function App() {
             path="/dashboard"
             element={
               <ProtectedRoute>
-                <div className="p-8 text-center">
-                  <h1 className="text-3xl font-bold text-gray-900 mb-4">Welcome to the Family Tree!</h1>
-                  <p className="text-gray-600">
-                    Explore your family's history and connections
-                  </p>
-                  <div className="mt-8 flex gap-4 justify-center">
-                    <a
-                      href="/family/members"
-                      className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                    >
-                      View Family Members
-                    </a>
-                    <a
-                      href="/family/tree"
-                      className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-                    >
-                      Explore Tree
-                    </a>
-                  </div>
-                </div>
+                <Dashboard />
               </ProtectedRoute>
             }
           />
@@ -107,9 +91,7 @@ function App() {
             path="/family/tree"
             element={
               <ProtectedRoute>
-                <div className="p-8 text-center">
-                  <h1 className="text-2xl font-bold">Family Tree Visualization - Coming Soon</h1>
-                </div>
+                <FamilyTree />
               </ProtectedRoute>
             }
           />
@@ -117,9 +99,7 @@ function App() {
             path="/family/birthdays"
             element={
               <ProtectedRoute>
-                <div className="p-8 text-center">
-                  <h1 className="text-2xl font-bold">Birthdays - Coming Soon</h1>
-                </div>
+                <BirthdayPage />
               </ProtectedRoute>
             }
           />

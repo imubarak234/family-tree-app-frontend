@@ -12,10 +12,27 @@ export const VITAL_STATUS_OPTIONS = [
 ];
 
 export const RELATIONSHIP_TYPES = {
-  PARENT: 'parent',
-  CHILD: 'child',
-  SPOUSE: 'spouse',
-  SIBLING: 'sibling',
+  PARENT: 'Parent',
+  CHILD: 'Child',
+  SPOUSE: 'Spouse',
+  SIBLING: 'Sibling',
+  PARTNER: 'Partner',
+};
+
+export const RELATIONSHIP_TYPE_OPTIONS = [
+  { value: 'Parent', label: 'Parent' },
+  { value: 'Child', label: 'Child' },
+  { value: 'Spouse', label: 'Spouse' },
+  { value: 'Partner', label: 'Partner' },
+  { value: 'Sibling', label: 'Sibling' },
+];
+
+export const RELATIONSHIP_LABELS = {
+  Parent: 'Parent',
+  Child: 'Child',
+  Spouse: 'Spouse',
+  Partner: 'Partner',
+  Sibling: 'Sibling',
 };
 
 export const TREE_VIEW_MODES = {

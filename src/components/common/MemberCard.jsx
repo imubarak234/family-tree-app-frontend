@@ -36,7 +36,7 @@ export default function MemberCard({ member, onEdit }) {
       {/* Info Section */}
       <div className="p-4">
         <h3 className="text-lg font-semibold text-gray-900 mb-1 truncate">
-          {member.firstName} {member.middleName && `${member.middleName} `}{member.lastName}
+          {member.title && `${member.title} `}{member.firstName} {member.middleName && `${member.middleName} `}{member.lastName}
         </h3>
 
         {member.maidenName && (

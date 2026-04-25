@@ -1,3 +1,4 @@
+import { get } from 'react-hook-form';
 import apiClient from './client';
 
 export const familyAPI = {
@@ -9,19 +10,25 @@ export const familyAPI = {
   deleteMember: (id) => apiClient.delete(`/family/members/${id}`),
 
   // Relationships
+  getRelationships: (memberId) => apiClient.get(`/family/relationships/member/${memberId}`),
   createRelationship: (data) => apiClient.post('/family/relationships', data),
   createParentChild: (data) => apiClient.post('/family/relationships/parent-child', data),
   createSpouse: (data) => apiClient.post('/family/relationships/spouse', data),
+  updateRelationship: (id, data) => apiClient.put(`/family/relationships/${id}`, data),
   deleteRelationship: (id) => apiClient.delete(`/family/relationships/${id}`),
+  relationshipSummary: (memberId) => apiClient.get(`/family/relationships/member/${memberId}/summary`),
 
   // Tree queries
   getAncestors: (memberId, maxDepth) =>
-    apiClient.get(`/family/tree/ancestors/${memberId}`, { params: { maxDepth } }),
+    apiClient.get(`/family/ancestors/${memberId}`, { params: { maxDepth } }),
   getDescendants: (memberId, maxDepth) =>
-    apiClient.get(`/family/tree/descendants/${memberId}`, { params: { maxDepth } }),
-  getSiblings: (memberId) => apiClient.get(`/family/tree/siblings/${memberId}`),
-  getChildren: (memberId) => apiClient.get(`/family/tree/children/${memberId}`),
-  getParents: (memberId) => apiClient.get(`/family/tree/parents/${memberId}`),
+    apiClient.get(`/family/descendants/${memberId}`, { params: { maxDepth } }),
+  getSiblings: (memberId) => apiClient.get(`/family/siblings/${memberId}`),
+  getSpouses: (memberId) => apiClient.get(`/family/spouses/${memberId}`),
+  getChildren: (memberId) => apiClient.get(`/family/children/${memberId}`),
+  getParents: (memberId) => apiClient.get(`/family/parents/${memberId}`),
+  getFamilyTree: (memberId, maxDepth) =>
+    apiClient.get(`/family/tree/${memberId}`, { params: { maxDepth } }),
 
   // Birthdays
   getUpcomingBirthdays: (days = 30) =>

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { familyAPI } from '../api/family';
+import { normalizeResponse, handleApiError } from '../utils/apiHelpers';
 
 export function useUpdateMember() {
   const [loading, setLoading] = useState(false);
@@ -10,9 +11,10 @@ export function useUpdateMember() {
       setLoading(true);
       setError(null);
       const response = await familyAPI.updateMember(id, data);
-      return response.data.data; // Return updated member
+      const normalizedData = normalizeResponse(response);
+      return normalizedData; // Return updated member
     } catch (err) {
-      const errorMessage = err.response?.data?.message || 'Failed to update member';
+      const errorMessage = handleApiError(err, 'Failed to update member');
       setError(errorMessage);
       throw new Error(errorMessage);
     } finally {

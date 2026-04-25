@@ -35,6 +35,7 @@ export default function MemberForm() {
       middleName: '',
       lastName: '',
       maidenName: '',
+      title: '',
       gender: '',
       birthDate: '',
       birthPlace: '',
@@ -212,7 +213,7 @@ export default function MemberForm() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Maiden Name
@@ -229,6 +230,29 @@ export default function MemberForm() {
                       />
                     )}
                   />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Title
+                  </label>
+                  <Controller
+                    name="title"
+                    control={control}
+                    render={({ field }) => (
+                      <input
+                        {...field}
+                        type="text"
+                        className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                          errors.title ? 'border-red-300' : 'border-gray-300'
+                        }`}
+                        placeholder="e.g. Dr., Prof., Rev."
+                      />
+                    )}
+                  />
+                  {errors.title && (
+                    <p className="mt-1 text-sm text-red-600">{errors.title.message}</p>
+                  )}
                 </div>
 
                 <div>

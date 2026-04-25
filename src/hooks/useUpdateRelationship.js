@@ -2,19 +2,19 @@ import { useState } from 'react';
 import { familyAPI } from '../api/family';
 import { normalizeResponse, handleApiError } from '../utils/apiHelpers';
 
-export function useCreateMember() {
+export function useUpdateRelationship() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const createMember = async (data) => {
+  const updateRelationship = async (id, data) => {
     try {
       setLoading(true);
       setError(null);
-      const response = await familyAPI.createMember(data);
+      const response = await familyAPI.updateRelationship(id, data);
       const normalizedData = normalizeResponse(response);
-      return normalizedData; // Return created member
+      return normalizedData;
     } catch (err) {
-      const errorMessage = handleApiError(err, 'Failed to create member');
+      const errorMessage = handleApiError(err, 'Failed to update relationship');
       setError(errorMessage);
       throw new Error(errorMessage);
     } finally {
@@ -22,5 +22,5 @@ export function useCreateMember() {
     }
   };
 
-  return { createMember, loading, error };
+  return { updateRelationship, loading, error };
 }

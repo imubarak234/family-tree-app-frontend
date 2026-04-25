@@ -2,18 +2,18 @@ import { useState } from 'react';
 import { familyAPI } from '../api/family';
 import { handleApiError } from '../utils/apiHelpers';
 
-export function useDeleteMember() {
+export function useDeleteRelationship() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const deleteMember = async (id) => {
+  const deleteRelationship = async (id) => {
     try {
       setLoading(true);
       setError(null);
-      await familyAPI.deleteMember(id);
+      await familyAPI.deleteRelationship(id);
       return true;
     } catch (err) {
-      const errorMessage = handleApiError(err, 'Failed to delete member');
+      const errorMessage = handleApiError(err, 'Failed to delete relationship');
       setError(errorMessage);
       throw new Error(errorMessage);
     } finally {
@@ -21,5 +21,5 @@ export function useDeleteMember() {
     }
   };
 
-  return { deleteMember, loading, error };
+  return { deleteRelationship, loading, error };
 }

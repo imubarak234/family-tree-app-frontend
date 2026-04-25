@@ -21,8 +21,6 @@ export default function MemberList() {
     vitalStatus: '',
   });
 
-  console.log(canAdd);
-
   const debouncedSearch = useDebounce(searchTerm, 300);
 
   const { data, loading, error } = useMembers({
@@ -30,7 +28,9 @@ export default function MemberList() {
     ...filters,
   });
 
-  const members = data?.data?.members || [];
+  console.log('Fetched members data:', data); // Debug log to check API response structure
+
+  const members = data?.members || [];
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">

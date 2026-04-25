@@ -1,0 +1,70 @@
+/**
+ * API Helper Utilities
+ * Centralized response normalization and error handling for consistent API integration
+ */
+
+/**
+ * Unwrap API response envelope consistently
+ * Handles both response.data and response.data.data patterns
+ * @param {Object} response - Axios response object
+ * @returns {*} Normalized data
+ */
+export function normalizeResponse(response) {
+  // Handle both response.data and response.data.data patterns
+  const data = response.data?.data ?? response.data;
+  return data;
+}
+
+/**
+ * Centralized error message extraction and user-friendly error handling
+ * @param {Error} error - Error object from API call
+ * @param {string} defaultMessage - Fallback message if no specific error found
+ * @returns {string} User-friendly error message
+ */
+export function handleApiError(error, defaultMessage) {
+  if (error.response) {
+    const message = error.response.data?.message;
+
+    // Map status codes to user-friendly messages
+    switch (error.response.status) {
+      case 400:
+        return message || 'Invalid request. Please check your input.';
+      case 401:
+        return 'Your session has expired. Please log in again.';
+      case 403:
+        return 'You do not have permission to perform this action.';
+      case 404:
+        return message || 'The requested resource was not found.';
+      case 500:
+        return 'Server error. Please try again later.';
+      default:
+        return message || defaultMessage;
+    }
+  }
+
+  if (error.request) {
+    return 'Network error. Please check your connection.';
+  }
+
+  return defaultMessage;
+}
+
+/**
+ * Convert snake_case object keys to camelCase
+ * Useful for future backend changes or inconsistent API responses
+ * @param {*} obj - Object, array, or primitive to convert
+ * @returns {*} Converted object with camelCase keys
+ */
+export function toCamelCase(obj) {
+  if (!obj || typeof obj !== 'object') return obj;
+
+  if (Array.isArray(obj)) {
+    return obj.map(toCamelCase);
+  }
+
+  return Object.keys(obj).reduce((acc, key) => {
+    const camelKey = key.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
+    acc[camelKey] = toCamelCase(obj[key]);
+    return acc;
+  }, {});
+}

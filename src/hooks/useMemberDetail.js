@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { familyAPI } from '../api/family';
+import { normalizeResponse, handleApiError } from '../utils/apiHelpers';
 
 export function useMemberDetail(id) {
   const [member, setMember] = useState(null);
@@ -13,9 +14,11 @@ export function useMemberDetail(id) {
       setLoading(true);
       setError(null);
       const response = await familyAPI.getMember(id);
-      setMember(response.data.data);
+      const normalizedData = normalizeResponse(response);
+      setMember(normalizedData);
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to fetch member');
+      const errorMessage = handleApiError(err, 'Failed to fetch member');
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
