@@ -61,6 +61,10 @@ export default function TreeControls({
           <option value="ancestors">Ancestors</option>
           <option value="descendants">Descendants</option>
           <option value="tree">Full Tree</option>
+          <option value="siblings">Siblings</option>
+          <option value="spouses">Spouses</option>
+          <option value="children">Children</option>
+          <option value="parents">Parents</option>
         </select>
       </div>
     </div>

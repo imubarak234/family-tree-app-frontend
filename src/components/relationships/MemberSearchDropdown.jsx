@@ -86,7 +86,7 @@ export default function MemberSearchDropdown({
             </div>
             <div>
               <p className="text-sm font-medium text-gray-900">
-                {selectedMember.firstName} {selectedMember.lastName}
+                {selectedMember.firstName} {selectedMember?.middleName ? `${selectedMember?.middleName} ` : ''}{selectedMember.lastName}
               </p>
               {selectedMember.birthDate && (
                 <p className="text-xs text-gray-500">
@@ -145,7 +145,7 @@ export default function MemberSearchDropdown({
                     {member.photo ? (
                       <img
                         src={member.photo}
-                        alt={`${member.firstName} ${member.lastName}`}
+                        alt={`${member.firstName} ${member?.middleName ? `${member?.middleName} ` : ''}${member.lastName}`}
                         className="w-full h-full object-cover"
                       />
                     ) : (
@@ -154,7 +154,7 @@ export default function MemberSearchDropdown({
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-900">
-                      {member.firstName} {member.lastName}
+                      {member.firstName} {member?.middleName ? `${member?.middleName} ` : ''}{member.lastName}
                     </p>
                     {member.birthDate && (
                       <p className="text-xs text-gray-500">

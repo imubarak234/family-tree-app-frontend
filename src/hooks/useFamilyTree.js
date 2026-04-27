@@ -45,6 +45,7 @@ export function useFamilyTree(memberId, treeType = 'ancestors', maxDepth = 3) {
       }
 
       const normalizedData = normalizeResponse(response);
+      console.log('Normalized tree data:', normalizedData); // Debug log to check data structure
 
       setTreeData(normalizedData);
     } catch (err) {

@@ -68,7 +68,23 @@ export default function MemberForm() {
       setSuccess('');
 
       if (isEdit) {
-        await updateMember(id, data);
+        const payload = {
+          firstName: data?.firstName ?? '',
+          lastName: data?.lastName ?? '',
+          middleName: data?.middleName ?? '',
+          maidenName: data?.maidenName ?? '',
+          gender: data?.gender ?? '',
+          birthDate: data?.birthDate ? new Date(data.birthDate).toISOString() : null,
+          birthPlace: data?.birthPlace ?? '',
+          deathPlace: data?.deathPlace ?? '',
+          bio: data?.bio ?? '',
+          vitalStatus: data?.vitalStatus ?? 'Unknown',
+          occupation: data?.occupation ?? '',
+          email: data?.email ?? '',
+          phone: data?.phone ?? '',
+          title: data?.title ?? '',
+        }
+        await updateMember(id, payload);
         setSuccess('Member updated successfully!');
         setTimeout(() => navigate(`/family/members/${id}`), 1500);
       } else {
