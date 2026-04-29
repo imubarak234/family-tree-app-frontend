@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { Home, Users, Calendar, User, LogOut } from 'lucide-react';
+import { Home, Users, Calendar, User, LogOut, Image, FileText } from 'lucide-react';
 
 export default function Navbar() {
   const { isAuthenticated, user, logout } = useAuth();
@@ -57,6 +57,20 @@ export default function Navbar() {
               >
                 <Calendar className="w-4 h-4 mr-2" />
                 Birthdays
+              </Link>
+              <Link
+                to="/media/photos"
+                className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors"
+              >
+                <Image className="w-4 h-4 mr-2" />
+                Photos
+              </Link>
+              <Link
+                to="/media/documents"
+                className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors"
+              >
+                <FileText className="w-4 h-4 mr-2" />
+                Documents
               </Link>
             </div>
           </div>

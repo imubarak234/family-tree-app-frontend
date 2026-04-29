@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { authAPI } from '../../api/auth';
 
 export default function ForgotPassword() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -18,12 +18,11 @@ export default function ForgotPassword() {
 
     try {
       setError('');
-      setSuccess('');
       setLoading(true);
       await authAPI.forgotPassword(email);
-      setSuccess('Password reset link sent! Please check your email.');
+      navigate('/reset-password', { state: { email } });
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to send reset link. Please try again.');
+      setError(err.response?.data?.message || 'Failed to send reset code. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -55,12 +54,6 @@ export default function ForgotPassword() {
             </div>
           )}
 
-          {success && (
-            <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
-              <p className="text-sm text-green-800">{success}</p>
-            </div>
-          )}
-
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
@@ -86,7 +79,7 @@ export default function ForgotPassword() {
                   : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-md hover:shadow-lg'
               }`}
             >
-              {loading ? 'Sending...' : 'Send Reset Link'}
+              {loading ? 'Sending...' : 'Send Reset Code'}
             </button>
           </form>
 

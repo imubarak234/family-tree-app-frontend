@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import {
   ReactFlow,
   Background,
@@ -10,7 +10,6 @@ import {
 import '@xyflow/react/dist/style.css';
 import { GitBranch, Search } from 'lucide-react';
 import { useFamilyTree } from '../hooks/useFamilyTree';
-import { useMembers } from '../hooks/useMembers';
 import { transformTreeToGraph, applyHierarchicalLayout } from '../utils/treeTransformer';
 import FamilyMemberNode from '../components/tree/FamilyMemberNode';
 import TreeControls from '../components/tree/TreeControls';
@@ -28,7 +27,6 @@ export default function FamilyTree() {
   const [showSearch, setShowSearch] = useState(true);
 
   const { treeData, loading, error } = useFamilyTree(rootMemberId, viewMode, depth);
-  const { data: membersData } = useMembers({ page: 1, limit: 100 });
 
   // Transform tree data to graph
   const { nodes: initialNodes, edges: initialEdges } = useMemo(() => {
@@ -42,7 +40,7 @@ export default function FamilyTree() {
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
   // Update nodes/edges when tree data changes
-  useMemo(() => {
+  useEffect(() => {
     setNodes(initialNodes);
     setEdges(initialEdges);
   }, [initialNodes, initialEdges, setNodes, setEdges]);

@@ -9,6 +9,7 @@ export function useFamilyTree(memberId, treeType = 'ancestors', maxDepth = 3) {
 
   const fetchTree = async () => {
     if (!memberId) {
+      setTreeData(null);
       setLoading(false);
       return;
     }
@@ -44,10 +45,20 @@ export function useFamilyTree(memberId, treeType = 'ancestors', maxDepth = 3) {
           throw new Error(`Unknown tree type: ${treeType}`);
       }
 
-      const normalizedData = normalizeResponse(response);
-      console.log('Normalized tree data:', normalizedData); // Debug log to check data structure
+      const normalizedData = normalizeResponse(response) || {};
+      const rootMember = normalizedData.rootMember || normalizedData.member || null;
 
-      setTreeData(normalizedData);
+      setTreeData({
+        ...normalizedData,
+        rootMember,
+        ancestors: Array.isArray(normalizedData.ancestors) ? normalizedData.ancestors : [],
+        descendants: Array.isArray(normalizedData.descendants) ? normalizedData.descendants : [],
+        relationships: Array.isArray(normalizedData.relationships) ? normalizedData.relationships : [],
+        siblings: Array.isArray(normalizedData.siblings) ? normalizedData.siblings : [],
+        spouses: Array.isArray(normalizedData.spouses) ? normalizedData.spouses : [],
+        parents: Array.isArray(normalizedData.parents) ? normalizedData.parents : [],
+        children: Array.isArray(normalizedData.children) ? normalizedData.children : [],
+      });
     } catch (err) {
       const errorMessage = handleApiError(err, 'Failed to fetch family tree');
       setError(errorMessage);

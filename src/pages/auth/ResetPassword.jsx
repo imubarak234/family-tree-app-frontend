@@ -1,11 +1,18 @@
 import { useState } from 'react';
-import { useNavigate, useSearchParams, Link } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { authAPI } from '../../api/auth';
 
 const resetPasswordSchema = yup.object({
+  email: yup
+    .string()
+    .email('Please enter a valid email address')
+    .required('Email is required'),
+  code: yup
+    .string()
+    .required('Reset code is required'),
   password: yup
     .string()
     .min(8, 'Password must be at least 8 characters')
@@ -18,8 +25,8 @@ const resetPasswordSchema = yup.object({
 
 export default function ResetPassword() {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const token = searchParams.get('token');
+  const location = useLocation();
+  const prefillEmail = location.state?.email ?? '';
 
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -31,21 +38,18 @@ export default function ResetPassword() {
     formState: { errors },
   } = useForm({
     resolver: yupResolver(resetPasswordSchema),
+    defaultValues: { email: prefillEmail },
   });
 
   const onSubmit = async (data) => {
-    if (!token) {
-      setError('Invalid or missing reset token');
-      return;
-    }
-
     try {
       setError('');
       setSuccess('');
       setLoading(true);
 
       await authAPI.resetPassword({
-        token,
+        email: data.email,
+        code: data.code,
         newPassword: data.password,
       });
 
@@ -59,28 +63,6 @@ export default function ResetPassword() {
       setLoading(false);
     }
   };
-
-  if (!token) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 py-12 px-4">
-        <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-8 text-center">
-          <div className="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
-            <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-            </svg>
-          </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Invalid Reset Link</h2>
-          <p className="text-gray-600 mb-6">This password reset link is invalid or has expired.</p>
-          <Link
-            to="/forgot-password"
-            className="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Request New Link
-          </Link>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -96,7 +78,7 @@ export default function ResetPassword() {
             Reset Password
           </h1>
           <p className="text-gray-600">
-            Enter your new password below
+            Enter the code from your email and choose a new password
           </p>
         </div>
 
@@ -115,6 +97,46 @@ export default function ResetPassword() {
           )}
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            {/* Email Field */}
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                Email Address
+              </label>
+              <input
+                {...register('email')}
+                id="email"
+                type="email"
+                autoComplete="email"
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
+                  errors.email ? 'border-red-300' : 'border-gray-300'
+                }`}
+                placeholder="you@example.com"
+              />
+              {errors.email && (
+                <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+              )}
+            </div>
+
+            {/* Reset Code Field */}
+            <div>
+              <label htmlFor="code" className="block text-sm font-medium text-gray-700 mb-2">
+                Reset Code
+              </label>
+              <input
+                {...register('code')}
+                id="code"
+                type="text"
+                autoComplete="one-time-code"
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors tracking-widest ${
+                  errors.code ? 'border-red-300' : 'border-gray-300'
+                }`}
+                placeholder="Enter the code from your email"
+              />
+              {errors.code && (
+                <p className="mt-1 text-sm text-red-600">{errors.code.message}</p>
+              )}
+            </div>
+
             {/* Password Field */}
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">

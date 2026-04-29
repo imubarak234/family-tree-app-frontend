@@ -39,3 +39,40 @@ export function canEditRelationship(user) {
 export function canDeleteRelationship(user) {
   return isAdmin(user);
 }
+
+// ---------------------------------------------------------------------------
+// Generic permission helper — checks user.permissions[] with admin fallback
+// ---------------------------------------------------------------------------
+export function hasPermission(user, permission) {
+  if (!user) return false;
+  if (isAdmin(user)) return true;
+  if (Array.isArray(user.permissions)) {
+    return user.permissions.includes(permission);
+  }
+  return false;
+}
+
+// Media permissions
+export function canViewMedia(user) {
+  return hasPermission(user, 'view:photos');
+}
+
+export function canUploadPhoto(user) {
+  return hasPermission(user, 'upload:photo');
+}
+
+export function canUploadDocument(user) {
+  return hasPermission(user, 'upload:document');
+}
+
+export function canUpdateMedia(user) {
+  return hasPermission(user, 'update:photo');
+}
+
+export function canDeleteMedia(user) {
+  return hasPermission(user, 'delete:photo');
+}
+
+export function canTagPhoto(user) {
+  return hasPermission(user, 'tag:photo');
+}

@@ -20,6 +20,11 @@ import MemberList from './pages/MemberList';
 import MemberDetail from './pages/MemberDetail';
 import MemberForm from './pages/MemberForm';
 
+// Media Pages
+import PhotosPage from './pages/media/PhotosPage';
+import DocumentsPage from './pages/media/DocumentsPage';
+import MediaDetail from './pages/media/MediaDetail';
+
 function App() {
   return (
     <ErrorBoundary>
@@ -82,6 +87,40 @@ function App() {
             element={
               <ProtectedRoute>
                 <MemberForm />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Media Routes */}
+          <Route
+            path="/media/photos"
+            element={
+              <ProtectedRoute>
+                <PhotosPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/media/photos/:id"
+            element={
+              <ProtectedRoute>
+                <MediaDetail />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/media/documents"
+            element={
+              <ProtectedRoute>
+                <DocumentsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/media/documents/:id"
+            element={
+              <ProtectedRoute>
+                <MediaDetail />
               </ProtectedRoute>
             }
           />

@@ -10,36 +10,49 @@
  * @param {string} treeType - Type of tree (ancestors, descendants, full)
  * @returns {Object} Object with nodes and edges arrays
  */
-export function transformTreeToGraph(treeData, treeType = 'ancestors') {
+export function transformTreeToGraph(treeData, _treeType = 'ancestors') {
   if (!treeData) return { nodes: [], edges: [] };
 
   const nodeMap = new Map(); // Deduplicate nodes by member ID
   const edges = [];
 
-  // Process tree data based on structure returned from API
-  // Assuming API returns: { rootMember, ancestors: [], descendants: [], relationships: [] }
-  console.log('Transforming tree data:', treeData, treeType);
-
   const rootMember = treeData.rootMember || treeData.member || treeData;
+  const rootMemberId = rootMember?.id;
 
   // If rootMember has an id, add it as root node
-  if (rootMember && rootMember.id) {
+  if (rootMemberId) {
     addNode(rootMember, 0, 0, 'root');
   }
 
   // Process ancestors (parent levels)
   if (treeData.ancestors && Array.isArray(treeData.ancestors)) {
-    processAncestors(treeData.ancestors, nodeMap, edges);
+    processAncestors(treeData.ancestors);
   }
 
   // Process descendants (child levels)
   if (treeData.descendants && Array.isArray(treeData.descendants)) {
-    processDescendants(treeData.descendants, nodeMap, edges);
+    processDescendants(treeData.descendants);
+  }
+
+  if (rootMemberId && treeData.parents && Array.isArray(treeData.parents)) {
+    processParents(treeData.parents, rootMemberId);
+  }
+
+  if (rootMemberId && treeData.children && Array.isArray(treeData.children)) {
+    processChildren(treeData.children, rootMemberId);
+  }
+
+  if (rootMemberId && treeData.siblings && Array.isArray(treeData.siblings)) {
+    processSiblings(treeData.siblings, rootMemberId);
+  }
+
+  if (rootMemberId && treeData.spouses && Array.isArray(treeData.spouses)) {
+    processSpouses(treeData.spouses, rootMemberId);
   }
 
   // Process relationships (siblings, spouses)
   if (treeData.relationships && Array.isArray(treeData.relationships)) {
-    processRelationships(treeData.relationships, nodeMap, edges);
+    processRelationships(treeData.relationships);
   }
 
   return {
@@ -62,13 +75,29 @@ export function transformTreeToGraph(treeData, treeType = 'ancestors') {
   }
 
   function addEdge(sourceId, targetId, type = 'parent-child') {
-    const edgeId = `${sourceId}-${targetId}-${type}`;
+    if (!sourceId || !targetId) {
+      return;
+    }
+
+    const isPeerRelationship = type === 'spouse' || type === 'sibling';
+    const normalizedSource = isPeerRelationship
+      ? [String(sourceId), String(targetId)].sort()[0]
+      : String(sourceId);
+    const normalizedTarget = isPeerRelationship
+      ? [String(sourceId), String(targetId)].sort()[1]
+      : String(targetId);
+    const edgeId = `${normalizedSource}-${normalizedTarget}-${type}`;
+
+    if (!nodeMap.has(normalizedSource) || !nodeMap.has(normalizedTarget)) {
+      return;
+    }
+
     // Check if edge already exists
     if (!edges.find((e) => e.id === edgeId)) {
       edges.push({
         id: edgeId,
-        source: String(sourceId),
-        target: String(targetId),
+        source: normalizedSource,
+        target: normalizedTarget,
         type: 'smoothstep',
         animated: false,
         style: getEdgeStyle(type),
@@ -77,7 +106,7 @@ export function transformTreeToGraph(treeData, treeType = 'ancestors') {
     }
   }
 
-  function processAncestors(ancestors, nodeMap, edges) {
+  function processAncestors(ancestors) {
     ancestors.forEach((level, levelIndex) => {
       if (Array.isArray(level)) {
         level.forEach((member, index) => {
@@ -90,7 +119,7 @@ export function transformTreeToGraph(treeData, treeType = 'ancestors') {
     });
   }
 
-  function processDescendants(descendants, nodeMap, edges) {
+  function processDescendants(descendants) {
     descendants.forEach((level, levelIndex) => {
       if (Array.isArray(level)) {
         level.forEach((member, index) => {
@@ -103,10 +132,44 @@ export function transformTreeToGraph(treeData, treeType = 'ancestors') {
     });
   }
 
-  function processRelationships(relationships, nodeMap, edges) {
+  function processParents(parents, memberId) {
+    parents.forEach((member, index) => {
+      addNode(member, index - parents.length / 2, -1, 'parent');
+      addEdge(member.id, memberId, 'parent-child');
+    });
+  }
+
+  function processChildren(children, memberId) {
+    children.forEach((member, index) => {
+      addNode(member, index - children.length / 2, 1, 'child');
+      addEdge(memberId, member.id, 'parent-child');
+    });
+  }
+
+  function processSiblings(siblings, memberId) {
+    siblings.forEach((member, index) => {
+      addNode(member, index + 1, 0, 'sibling');
+      addEdge(memberId, member.id, 'sibling');
+    });
+  }
+
+  function processSpouses(spouses, memberId) {
+    spouses.forEach((member, index) => {
+      addNode(member, -(index + 1), 0, 'spouse');
+      addEdge(memberId, member.id, 'spouse');
+    });
+  }
+
+  function processRelationships(relationships) {
     relationships.forEach((rel) => {
-      if (rel.relationshipType === 'Spouse' || rel.relationshipType === 'Partner') {
+      const relationshipType = rel.relationshipType?.toLowerCase();
+
+      if (relationshipType === 'spouse' || relationshipType === 'partner') {
         addEdge(rel.fromMemberId, rel.toMemberId, 'spouse');
+      }
+
+      if (relationshipType === 'sibling') {
+        addEdge(rel.fromMemberId, rel.toMemberId, 'sibling');
       }
     });
   }
@@ -137,36 +200,77 @@ function getEdgeStyle(type) {
  * @returns {Array} Updated nodes with positions
  */
 export function applyHierarchicalLayout(nodes, edges) {
-  // Group nodes by level (y-coordinate)
-  const levels = new Map();
+  const rows = new Map();
+  const rowHeight = 170;
+  const spacing = 250;
+
+  function getRowForLevel(level) {
+    switch (level) {
+      case 'ancestor':
+      case 'parent':
+        return -1;
+      case 'root':
+      case 'sibling':
+      case 'spouse':
+      case 'middle':
+        return 0;
+      case 'child':
+      case 'descendant':
+        return 1;
+      default:
+        return 0;
+    }
+  }
+
   nodes.forEach((node) => {
-    const level = node.data.level;
-    if (!levels.has(level)) {
-      levels.set(level, []);
+    const row = getRowForLevel(node.data.level);
+    if (!rows.has(row)) {
+      rows.set(row, []);
     }
-    levels.get(level).push(node);
+    rows.get(row).push(node);
   });
 
-  // Apply horizontal spacing within each level
-  const levelOrder = ['ancestor', 'root', 'descendant'];
-  let currentY = 0;
+  const rowOrder = Array.from(rows.keys()).sort((a, b) => a - b);
 
-  levelOrder.forEach((levelName) => {
-    const levelNodes = levels.get(levelName) || [];
-    const spacing = 250;
-    const startX = -(levelNodes.length * spacing) / 2;
+  rowOrder.forEach((row) => {
+    const rowNodes = rows.get(row) || [];
+    if (!rowNodes.length) {
+      return;
+    }
 
-    levelNodes.forEach((node, index) => {
-      node.position = {
-        x: startX + index * spacing,
-        y: currentY,
-      };
+    const y = row * rowHeight;
+    const rootNode = rowNodes.find((node) => node.data.level === 'root');
+
+    if (rootNode) {
+      rootNode.position = { x: 0, y };
+
+      const peers = rowNodes
+        .filter((node) => node.id !== rootNode.id)
+        .sort((a, b) => {
+          const levelWeight = { spouse: 0, sibling: 1, root: 2 };
+          const aWeight = levelWeight[a.data.level] ?? 3;
+          const bWeight = levelWeight[b.data.level] ?? 3;
+          return aWeight - bWeight;
+        });
+
+      peers.forEach((node, index) => {
+        const step = Math.floor(index / 2) + 1;
+        const direction = index % 2 === 0 ? -1 : 1;
+        node.position = {
+          x: direction * step * spacing,
+          y,
+        };
+      });
+      return;
+    }
+
+    const startX = -((rowNodes.length - 1) * spacing) / 2;
+    rowNodes.forEach((node, index) => {
+      node.position = { x: startX + index * spacing, y };
     });
-
-    if (levelNodes.length > 0) {
-      currentY += 150;
-    }
   });
+
+  void edges;
 
   return nodes;
 }

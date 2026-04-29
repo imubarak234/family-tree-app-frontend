@@ -29,6 +29,23 @@ export function formatLifespan(birthDate, deathDate, vitalStatus) {
   return birth;
 }
 
+export function getMediaUrl(filePath) {
+  if (!filePath) return null;
+  return `http://localhost:5001/${filePath}`;
+}
+
+export function formatFileSize(bytes) {
+  if (!bytes) return '0 B';
+  const units = ['B', 'KB', 'MB', 'GB'];
+  let size = bytes;
+  let unitIndex = 0;
+  while (size >= 1024 && unitIndex < units.length - 1) {
+    size /= 1024;
+    unitIndex++;
+  }
+  return `${size.toFixed(unitIndex === 0 ? 0 : 1)} ${units[unitIndex]}`;
+}
+
 export function calculateAge(birthDate) {
   if (!birthDate) return null;
   const today = new Date();

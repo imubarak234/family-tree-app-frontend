@@ -41,3 +41,27 @@ export const TREE_VIEW_MODES = {
   FULL: 'full',
   FOCUS: 'focus',
 };
+
+// ---------------------------------------------------------------------------
+// Media constants
+// ---------------------------------------------------------------------------
+export const MEDIA_BASE_URL = 'http://localhost:5001';
+
+export const PHOTO_ACCEPT = {
+  'image/jpeg': ['.jpg', '.jpeg'],
+  'image/png': ['.png'],
+  'image/gif': ['.gif'],
+  'image/webp': ['.webp'],
+};
+
+export const DOCUMENT_ACCEPT = {
+  'application/pdf': ['.pdf'],
+  'application/msword': ['.doc'],
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
+  'text/plain': ['.txt'],
+  'application/vnd.ms-excel': ['.xls'],
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'],
+};
+
+export const PHOTO_MAX_SIZE = 10 * 1024 * 1024;   // 10 MB
+export const DOCUMENT_MAX_SIZE = 20 * 1024 * 1024; // 20 MB

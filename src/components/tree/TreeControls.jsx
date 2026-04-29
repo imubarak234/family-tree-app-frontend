@@ -9,6 +9,8 @@ export default function TreeControls({
   viewMode,
   onViewModeChange,
 }) {
+  const supportsDepth = ['ancestors', 'descendants', 'tree'].includes(viewMode);
+
   return (
     <div className="absolute top-4 right-4 bg-white rounded-lg shadow-lg p-4 space-y-4 z-10">
       {/* Zoom Controls */}
@@ -36,20 +38,22 @@ export default function TreeControls({
         </button>
       </div>
 
-      <div className="border-t border-gray-200 pt-4">
-        <label className="block text-xs font-medium text-gray-700 mb-2">Depth</label>
-        <select
-          value={depth}
-          onChange={(e) => onDepthChange(Number(e.target.value))}
-          className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
-        >
-          <option value={1}>1 Level</option>
-          <option value={2}>2 Levels</option>
-          <option value={3}>3 Levels</option>
-          <option value={4}>4 Levels</option>
-          <option value={5}>5 Levels</option>
-        </select>
-      </div>
+      {supportsDepth && (
+        <div className="border-t border-gray-200 pt-4">
+          <label className="block text-xs font-medium text-gray-700 mb-2">Depth</label>
+          <select
+            value={depth}
+            onChange={(e) => onDepthChange(Number(e.target.value))}
+            className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+          >
+            <option value={1}>1 Level</option>
+            <option value={2}>2 Levels</option>
+            <option value={3}>3 Levels</option>
+            <option value={4}>4 Levels</option>
+            <option value={5}>5 Levels</option>
+          </select>
+        </div>
+      )}
 
       <div className="border-t border-gray-200 pt-4">
         <label className="block text-xs font-medium text-gray-700 mb-2">View</label>
