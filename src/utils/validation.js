@@ -108,3 +108,74 @@ export const spouseSchema = yup.object({
     }),
   notes: yup.string().max(500, 'Notes must be less than 500 characters'),
 });
+
+// Phase 4 - News
+export const newsCreateSchema = yup.object({
+  title: yup.string().min(3, 'Title must be at least 3 characters').max(200).required('Title is required'),
+  excerpt: yup.string().max(500).nullable().transform((value, originalValue) => (originalValue === '' ? null : value)),
+  content: yup.string().min(10, 'Content must be at least 10 characters').required('Content is required'),
+  status: yup.string().oneOf(['Draft', 'Published', 'Archived', '']).optional(),
+  coverMediaId: yup.string().uuid('Cover media ID must be a valid UUID').nullable().transform((value, originalValue) => (originalValue === '' ? null : value)),
+  relatedMemberIds: yup.array().of(yup.string().uuid('Member ID must be a valid UUID')).optional(),
+});
+
+export const newsUpdateSchema = yup.object({
+  title: yup.string().min(3).max(200).optional(),
+  excerpt: yup.string().max(500).nullable().transform((value, originalValue) => (originalValue === '' ? null : value)).optional(),
+  content: yup.string().min(10).optional(),
+  status: yup.string().oneOf(['Draft', 'Published', 'Archived']).optional(),
+  coverMediaId: yup.string().uuid('Cover media ID must be a valid UUID').nullable().transform((value, originalValue) => (originalValue === '' ? null : value)).optional(),
+  relatedMemberIds: yup.array().of(yup.string().uuid('Member ID must be a valid UUID')).optional(),
+});
+
+// Phase 4 - Events
+const parseNullableDate = (value, originalValue) => {
+  if (originalValue === '' || originalValue === null || originalValue === undefined) return null;
+  const date = new Date(originalValue);
+  return Number.isNaN(date.getTime()) ? new Date('') : date;
+};
+
+export const eventCreateSchema = yup.object({
+  title: yup.string().min(3).max(200).required('Title is required'),
+  description: yup.string().min(5).max(10000).required('Description is required'),
+  startsAt: yup.date().typeError('Start date/time is required').required('Start date/time is required'),
+  endsAt: yup.date().nullable().transform(parseNullableDate).test('ends-after-start', 'End date/time must be after start date/time', function(value) {
+    const { startsAt } = this.parent;
+    if (!value || !startsAt) return true;
+    return value > new Date(startsAt);
+  }),
+  location: yup.string().max(255).nullable().transform((value, originalValue) => (originalValue === '' ? null : value)),
+  isVirtual: yup.boolean().default(false),
+  meetingUrl: yup.string().url('Meeting URL must be valid').nullable().transform((value, originalValue) => (originalValue === '' ? null : value)),
+  capacity: yup.number().integer().min(1).nullable().transform((value, originalValue) => (originalValue === '' ? null : value)),
+  isPublished: yup.boolean().default(false),
+  coverMediaId: yup.string().uuid('Cover media ID must be a valid UUID').nullable().transform((value, originalValue) => (originalValue === '' ? null : value)),
+  relatedMemberIds: yup.array().of(yup.string().uuid('Member ID must be a valid UUID')).optional(),
+});
+
+export const eventUpdateSchema = eventCreateSchema.shape({
+  title: yup.string().min(3).max(200).optional(),
+  description: yup.string().min(5).max(10000).optional(),
+  startsAt: yup.date().optional(),
+});
+
+// Phase 4 - RSVP
+export const rsvpSchema = yup.object({
+  status: yup.string().oneOf(['Going', 'Maybe', 'NotGoing']).required('Status is required'),
+  guestCount: yup.number().integer().min(1).nullable().transform((value, originalValue) => (originalValue === '' ? null : value)).optional(),
+  note: yup.string().max(2000).nullable().transform((value, originalValue) => (originalValue === '' ? null : value)).optional(),
+});
+
+// Phase 4 - Engagement
+export const commentCreateSchema = yup.object({
+  content: yup.string().min(1).max(5000).required('Comment content is required'),
+  parentCommentId: yup.string().uuid('Parent comment ID must be a valid UUID').nullable().transform((value, originalValue) => (originalValue === '' ? null : value)).optional(),
+});
+
+export const commentUpdateSchema = yup.object({
+  content: yup.string().min(1).max(5000).required('Comment content is required'),
+});
+
+export const reactionCreateSchema = yup.object({
+  reactionType: yup.string().oneOf(['Like', 'Love', 'Celebrate', 'Support']).required('Reaction type is required'),
+});

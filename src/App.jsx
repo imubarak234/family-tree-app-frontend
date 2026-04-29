@@ -25,6 +25,15 @@ import PhotosPage from './pages/media/PhotosPage';
 import DocumentsPage from './pages/media/DocumentsPage';
 import MediaDetail from './pages/media/MediaDetail';
 
+// Social Pages
+import NewsListPage from './pages/social/NewsListPage';
+import NewsDetailPage from './pages/social/NewsDetailPage';
+import NewsFormPage from './pages/social/NewsFormPage';
+import EventsListPage from './pages/social/EventsListPage';
+import EventDetailPage from './pages/social/EventDetailPage';
+import EventFormPage from './pages/social/EventFormPage';
+import TimelinePage from './pages/social/TimelinePage';
+
 function App() {
   return (
     <ErrorBoundary>
@@ -121,6 +130,82 @@ function App() {
             element={
               <ProtectedRoute>
                 <MediaDetail />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Social Routes */}
+          <Route
+            path="/news"
+            element={
+              <ProtectedRoute>
+                <NewsListPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/news/new"
+            element={
+              <ProtectedRoute>
+                <NewsFormPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/news/:id"
+            element={
+              <ProtectedRoute>
+                <NewsDetailPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/news/:id/edit"
+            element={
+              <ProtectedRoute>
+                <NewsFormPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/events"
+            element={
+              <ProtectedRoute>
+                <EventsListPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/events/new"
+            element={
+              <ProtectedRoute>
+                <EventFormPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/events/:id"
+            element={
+              <ProtectedRoute>
+                <EventDetailPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/events/:id/edit"
+            element={
+              <ProtectedRoute>
+                <EventFormPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/timeline"
+            element={
+              <ProtectedRoute>
+                <TimelinePage />
               </ProtectedRoute>
             }
           />

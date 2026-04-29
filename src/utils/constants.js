@@ -65,3 +65,27 @@ export const DOCUMENT_ACCEPT = {
 
 export const PHOTO_MAX_SIZE = 10 * 1024 * 1024;   // 10 MB
 export const DOCUMENT_MAX_SIZE = 20 * 1024 * 1024; // 20 MB
+
+// ---------------------------------------------------------------------------
+// Social feature constants
+// ---------------------------------------------------------------------------
+export const NEWS_STATUS_OPTIONS = [
+  { value: 'Draft', label: 'Draft' },
+  { value: 'Published', label: 'Published' },
+  { value: 'Archived', label: 'Archived' },
+];
+
+export const RSVP_STATUS_OPTIONS = [
+  { value: 'Going', label: 'Going' },
+  { value: 'Maybe', label: 'Maybe' },
+  { value: 'NotGoing', label: 'Not going' },
+];
+
+export const REACTION_TYPES = ['Like', 'Love', 'Celebrate', 'Support'];
+
+export const TIMELINE_SOURCE_TYPES = [
+  { value: 'NewsPost', label: 'News' },
+  { value: 'Event', label: 'Events' },
+  { value: 'Birth', label: 'Births' },
+  { value: 'Death', label: 'Deaths' },
+];
