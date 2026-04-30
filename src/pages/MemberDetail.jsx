@@ -9,13 +9,14 @@ import { formatDate, formatFullName, calculateAge } from '../utils/formatters';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import StatusBadge from '../components/common/StatusBadge';
 import RelationshipsList from '../components/relationships/RelationshipsList';
+import ProfilePhotoUploader from '../components/family/ProfilePhotoUploader';
 
 export default function MemberDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const { member, loading, error } = useMemberDetail(id);
+  const { member, loading, error, refetch } = useMemberDetail(id);
   const { deleteMember, loading: deleting } = useDeleteMember();
 
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -27,7 +28,7 @@ export default function MemberDetail() {
     try {
       await deleteMember(id);
       navigate('/family/members');
-    } catch (err) {
+    } catch {
       alert('Failed to delete member');
     }
   };
@@ -79,13 +80,11 @@ export default function MemberDetail() {
             <div className="flex flex-col md:flex-row md:items-end md:justify-between -mt-16 mb-6">
               {/* Photo */}
                 <div className="flex items-end gap-6">
-                <div className="w-32 h-32 rounded-full border-4 border-white bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center overflow-hidden shadow-lg">
-                  {member.photo ? (
-                    <img src={member.photo} alt={formatFullName(member)} className="w-full h-full object-cover" />
-                  ) : (
-                    <User className="w-16 h-16 text-gray-400" />
-                  )}
-                </div>
+                <ProfilePhotoUploader
+                  memberId={member.id}
+                  currentPhotoPath={member.profilePhoto || member.photo || null}
+                  onSuccess={refetch}
+                />
                 <div className="">
                   <h1 className="text-3xl font-bold text-gray-900">
                     {member.title ? `${member.title} ` : ''}{formatFullName(member)}

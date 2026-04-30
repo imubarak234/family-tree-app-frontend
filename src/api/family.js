@@ -1,4 +1,3 @@
-import { get } from 'react-hook-form';
 import apiClient from './client';
 
 export const familyAPI = {
@@ -8,6 +7,11 @@ export const familyAPI = {
   createMember: (data) => apiClient.post('/family/members', data),
   updateMember: (id, data) => apiClient.put(`/family/members/${id}`, data),
   deleteMember: (id) => apiClient.delete(`/family/members/${id}`),
+  uploadMemberPhoto: (id, formData) =>
+    apiClient.post(`/family/members/${id}/photo`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }),
+  deleteMemberPhoto: (id) => apiClient.delete(`/family/members/${id}/photo`),
 
   // Relationships
   getRelationships: (memberId) => apiClient.get(`/family/relationships/member/${memberId}`),

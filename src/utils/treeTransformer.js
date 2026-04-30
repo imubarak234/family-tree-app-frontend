@@ -60,7 +60,8 @@ export function transformTreeToGraph(treeData, _treeType = 'ancestors') {
     edges: edges,
   };
 
-  function addNode(member, x, y, level = 'middle') {
+  function addNode(member, x, y, level = 'middle', row = null) {
+    const resolvedRow = Number.isFinite(row) ? row : y;
     if (!nodeMap.has(member.id)) {
       nodeMap.set(member.id, {
         id: String(member.id),
@@ -69,6 +70,7 @@ export function transformTreeToGraph(treeData, _treeType = 'ancestors') {
         data: {
           member: member,
           level: level,
+          row: resolvedRow,
         },
       });
     }
@@ -101,7 +103,10 @@ export function transformTreeToGraph(treeData, _treeType = 'ancestors') {
         type: 'smoothstep',
         animated: false,
         style: getEdgeStyle(type),
-        label: type === 'spouse' ? '💍' : '',
+        label: '',
+        labelBgStyle: { fill: '#ffffff', fillOpacity: 0.9 },
+        labelStyle: { fontSize: 11, fontWeight: 500, fill: '#374151' },
+        data: { relationshipType: type, label: getDirectionalLabel(type) },
       });
     }
   }
@@ -110,7 +115,8 @@ export function transformTreeToGraph(treeData, _treeType = 'ancestors') {
     ancestors.forEach((level, levelIndex) => {
       if (Array.isArray(level)) {
         level.forEach((member, index) => {
-          addNode(member, index - level.length / 2, -(levelIndex + 1), 'ancestor');
+          const row = -(levelIndex + 1);
+          addNode(member, index - level.length / 2, row, 'ancestor', row);
           if (member.childId) {
             addEdge(member.id, member.childId, 'parent-child');
           }
@@ -123,7 +129,8 @@ export function transformTreeToGraph(treeData, _treeType = 'ancestors') {
     descendants.forEach((level, levelIndex) => {
       if (Array.isArray(level)) {
         level.forEach((member, index) => {
-          addNode(member, index - level.length / 2, levelIndex + 1, 'descendant');
+          const row = levelIndex + 1;
+          addNode(member, index - level.length / 2, row, 'descendant', row);
           if (member.parentId) {
             addEdge(member.parentId, member.id, 'parent-child');
           }
@@ -134,28 +141,28 @@ export function transformTreeToGraph(treeData, _treeType = 'ancestors') {
 
   function processParents(parents, memberId) {
     parents.forEach((member, index) => {
-      addNode(member, index - parents.length / 2, -1, 'parent');
+      addNode(member, index - parents.length / 2, -1, 'parent', -1);
       addEdge(member.id, memberId, 'parent-child');
     });
   }
 
   function processChildren(children, memberId) {
     children.forEach((member, index) => {
-      addNode(member, index - children.length / 2, 1, 'child');
+      addNode(member, index - children.length / 2, 1, 'child', 1);
       addEdge(memberId, member.id, 'parent-child');
     });
   }
 
   function processSiblings(siblings, memberId) {
     siblings.forEach((member, index) => {
-      addNode(member, index + 1, 0, 'sibling');
+      addNode(member, index + 1, 0, 'sibling', 0);
       addEdge(memberId, member.id, 'sibling');
     });
   }
 
   function processSpouses(spouses, memberId) {
     spouses.forEach((member, index) => {
-      addNode(member, -(index + 1), 0, 'spouse');
+      addNode(member, -(index + 1), 0, 'spouse', 0);
       addEdge(memberId, member.id, 'spouse');
     });
   }
@@ -177,6 +184,26 @@ export function transformTreeToGraph(treeData, _treeType = 'ancestors') {
 
 /**
  * Get edge styling based on relationship type
+  /**
+   * Get directional label text for an edge relationship type
+   * @param {string} type - Relationship type
+   * @returns {string} Human-readable directional label
+   */
+  function getDirectionalLabel(type) {
+    switch (type) {
+      case 'parent-child':
+        return 'Parent of';
+      case 'sibling':
+        return 'Sibling of';
+      case 'spouse':
+        return 'Married to';
+      default:
+        return '';
+    }
+  }
+
+  /**
+   * Get edge styling based on relationship type
  * @param {string} type - Relationship type
  * @returns {Object} Style object for edge
  */
@@ -203,6 +230,7 @@ export function applyHierarchicalLayout(nodes, edges) {
   const rows = new Map();
   const rowHeight = 170;
   const spacing = 250;
+  const minSpacing = 180;
 
   function getRowForLevel(level) {
     switch (level) {
@@ -223,11 +251,23 @@ export function applyHierarchicalLayout(nodes, edges) {
   }
 
   nodes.forEach((node) => {
-    const row = getRowForLevel(node.data.level);
+    const explicitRow = Number(node.data?.row);
+    const row = Number.isFinite(explicitRow)
+      ? explicitRow
+      : getRowForLevel(node.data.level);
     if (!rows.has(row)) {
       rows.set(row, []);
     }
     rows.get(row).push(node);
+  });
+
+  // Index for O(1) parent lookups during descendant positioning
+  const nodeById = new Map(nodes.map((n) => [n.id, n]));
+  const childToParentEdge = new Map();
+  edges.forEach((e) => {
+    if (e.data?.relationshipType === 'parent-child') {
+      childToParentEdge.set(e.target, e);
+    }
   });
 
   const rowOrder = Array.from(rows.keys()).sort((a, b) => a - b);
@@ -239,8 +279,9 @@ export function applyHierarchicalLayout(nodes, edges) {
     }
 
     const y = row * rowHeight;
-    const rootNode = rowNodes.find((node) => node.data.level === 'root');
 
+    // Root row: center root node, alternate peers around it
+    const rootNode = rowNodes.find((node) => node.data.level === 'root');
     if (rootNode) {
       rootNode.position = { x: 0, y };
 
@@ -256,21 +297,64 @@ export function applyHierarchicalLayout(nodes, edges) {
       peers.forEach((node, index) => {
         const step = Math.floor(index / 2) + 1;
         const direction = index % 2 === 0 ? -1 : 1;
-        node.position = {
-          x: direction * step * spacing,
-          y,
-        };
+        node.position = { x: direction * step * spacing, y };
       });
       return;
     }
 
+    // Descendant rows (row > 0): group children under their direct parent
+    if (row > 0) {
+      const parentToChildren = new Map();
+      const orphans = [];
+
+      rowNodes.forEach((node) => {
+        const parentEdge = childToParentEdge.get(node.id);
+        if (parentEdge) {
+          const parent = nodeById.get(parentEdge.source);
+          if (parent && Number.isFinite(parent.position?.x)) {
+            if (!parentToChildren.has(parentEdge.source)) {
+              parentToChildren.set(parentEdge.source, []);
+            }
+            parentToChildren.get(parentEdge.source).push(node);
+          } else {
+            orphans.push(node);
+          }
+        } else {
+          orphans.push(node);
+        }
+      });
+
+      parentToChildren.forEach((children, parentId) => {
+        const parent = nodeById.get(parentId);
+        const parentX = parent.position.x;
+        // Hybrid spacing cap: compress large sibling groups but keep a minimum gap
+        const effectiveSpacing =
+          children.length > 5
+            ? Math.max(minSpacing, (spacing * 5) / children.length)
+            : spacing;
+        const totalWidth = (children.length - 1) * effectiveSpacing;
+        const startX = parentX - totalWidth / 2;
+        children.forEach((child, idx) => {
+          child.position = { x: startX + idx * effectiveSpacing, y };
+        });
+      });
+
+      // Nodes whose parent is not yet positioned: spread evenly as fallback
+      if (orphans.length > 0) {
+        const startX = -((orphans.length - 1) * spacing) / 2;
+        orphans.forEach((node, idx) => {
+          node.position = { x: startX + idx * spacing, y };
+        });
+      }
+      return;
+    }
+
+    // Ancestor rows (row <= 0, non-root): spread evenly
     const startX = -((rowNodes.length - 1) * spacing) / 2;
     rowNodes.forEach((node, index) => {
       node.position = { x: startX + index * spacing, y };
     });
   });
-
-  void edges;
 
   return nodes;
 }

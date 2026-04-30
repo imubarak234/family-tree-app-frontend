@@ -26,6 +26,8 @@ export default function FamilyTree() {
   const [viewMode, setViewMode] = useState('ancestors'); // ancestors | descendants | tree
   const [showSearch, setShowSearch] = useState(true);
 
+  const [hoveredEdgeId, setHoveredEdgeId] = useState(null);
+
   const { treeData, loading, error } = useFamilyTree(rootMemberId, viewMode, depth);
 
   // Transform tree data to graph
@@ -44,6 +46,26 @@ export default function FamilyTree() {
     setNodes(initialNodes);
     setEdges(initialEdges);
   }, [initialNodes, initialEdges, setNodes, setEdges]);
+
+  // Show directional labels only on hover or selection
+  const displayEdges = useMemo(
+    () =>
+      edges.map((edge) => {
+        const isActive = edge.id === hoveredEdgeId || edge.selected;
+        return isActive && edge.data?.label
+          ? { ...edge, label: edge.data.label }
+          : { ...edge, label: '' };
+      }),
+    [edges, hoveredEdgeId],
+  );
+
+  const onEdgeMouseEnter = useCallback((_event, edge) => {
+    setHoveredEdgeId(edge.id);
+  }, []);
+
+  const onEdgeMouseLeave = useCallback(() => {
+    setHoveredEdgeId(null);
+  }, []);
 
   const onMemberSelect = useCallback((memberId) => {
     setRootMemberId(memberId);
@@ -137,10 +159,14 @@ export default function FamilyTree() {
         {rootMemberId && !loading && !error && (
           <ReactFlow
             nodes={nodes}
-            edges={edges}
+            edges={displayEdges}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             nodeTypes={nodeTypes}
+            onEdgeMouseEnter={onEdgeMouseEnter}
+            onEdgeMouseLeave={onEdgeMouseLeave}
+            edgesReconnectable={false}
+            interactionWidth={20}
             fitView
             minZoom={0.1}
             maxZoom={2}
@@ -150,9 +176,9 @@ export default function FamilyTree() {
             <MiniMap nodeColor="#3b82f6" />
 
             <TreeControls
-              onZoomIn={handleZoomIn}
-              onZoomOut={handleZoomOut}
-              onFitView={handleFitView}
+              //onZoomIn={handleZoomIn}
+              //onZoomOut={handleZoomOut}
+              //onFitView={handleFitView}
               depth={depth}
               onDepthChange={setDepth}
               viewMode={viewMode}

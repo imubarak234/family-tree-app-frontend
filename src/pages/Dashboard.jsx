@@ -2,6 +2,12 @@ import { useNavigate } from 'react-router-dom';
 import { Users, Calendar, GitBranch, Plus } from 'lucide-react';
 import StatisticsGrid from '../components/dashboard/StatisticsGrid';
 import BirthdayWidget from '../components/dashboard/BirthdayWidget';
+import PhotoGalleryWidget from '../components/dashboard/PhotoGalleryWidget';
+import DocumentsWidget from '../components/dashboard/DocumentsWidget';
+import NewsCarouselWidget from '../components/dashboard/NewsCarouselWidget';
+import UpcomingEventsWidget from '../components/dashboard/UpcomingEventsWidget';
+import ActivityFeedWidget from '../components/dashboard/ActivityFeedWidget';
+import MilestoneSpotlightWidget from '../components/dashboard/MilestoneSpotlightWidget';
 import { useBirthdaysToday } from '../hooks/useBirthdaysToday';
 import { useUpcomingBirthdays } from '../hooks/useUpcomingBirthdays';
 
@@ -67,6 +73,28 @@ export default function Dashboard() {
             </div>
           </button>
         </div>
+      </div>
+
+      {/* Birthdays */}
+      <div className="grid gap-6 lg:grid-cols-3 mb-8">
+        <div className="lg:col-span-2">
+          <PhotoGalleryWidget />
+        </div>
+        <DocumentsWidget />
+      </div>
+
+      {/* News + Upcoming Events */}
+      <div className="grid gap-6 lg:grid-cols-3 mb-8">
+        <div className="lg:col-span-2">
+          <NewsCarouselWidget />
+        </div>
+        <UpcomingEventsWidget />
+      </div>
+
+      {/* Timeline Teasers */}
+      <div className="grid gap-6 lg:grid-cols-2 mb-8">
+        <ActivityFeedWidget />
+        <MilestoneSpotlightWidget />
       </div>
 
       {/* Birthdays */}

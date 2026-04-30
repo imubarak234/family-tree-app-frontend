@@ -54,3 +54,74 @@ test('applyHierarchicalLayout keeps root, siblings and spouses on same row', () 
   assert.ok(parent.position.y < root.position.y);
   assert.ok(child.position.y > root.position.y);
 });
+
+test('applyHierarchicalLayout keeps multigenerational ancestors on distinct rows', () => {
+  const treeData = {
+    rootMember: { id: 'root', firstName: 'Root', lastName: 'Person' },
+    ancestors: [
+      [{ id: 'parent-1', firstName: 'Parent', lastName: 'One', childId: 'root' }],
+      [{ id: 'grandparent-1', firstName: 'Grand', lastName: 'Parent', childId: 'parent-1' }],
+    ],
+  };
+
+  const graph = transformTreeToGraph(treeData, 'ancestors');
+  const positioned = applyHierarchicalLayout(graph.nodes, graph.edges);
+
+  const root = positioned.find((node) => node.id === 'root');
+  const parent = positioned.find((node) => node.id === 'parent-1');
+  const grandparent = positioned.find((node) => node.id === 'grandparent-1');
+
+  assert.ok(grandparent.position.y < parent.position.y);
+  assert.ok(parent.position.y < root.position.y);
+});
+
+test('applyHierarchicalLayout positions grandchildren under their own parent', () => {
+  // Two children (A, B) each with one grandchild (GA under A, GB under B)
+  const nodes = [
+    { id: 'root', data: { level: 'root', row: 0 }, position: { x: 0, y: 0 } },
+    { id: 'child-a', data: { level: 'child', row: 1 }, position: { x: 0, y: 0 } },
+    { id: 'child-b', data: { level: 'child', row: 1 }, position: { x: 0, y: 0 } },
+    { id: 'gc-a', data: { level: 'descendant', row: 2 }, position: { x: 0, y: 0 } },
+    { id: 'gc-b', data: { level: 'descendant', row: 2 }, position: { x: 0, y: 0 } },
+  ];
+  const edges = [
+    { id: 'root-child-a', source: 'root', target: 'child-a', data: { relationshipType: 'parent-child' } },
+    { id: 'root-child-b', source: 'root', target: 'child-b', data: { relationshipType: 'parent-child' } },
+    { id: 'child-a-gc-a', source: 'child-a', target: 'gc-a', data: { relationshipType: 'parent-child' } },
+    { id: 'child-b-gc-b', source: 'child-b', target: 'gc-b', data: { relationshipType: 'parent-child' } },
+  ];
+
+  const positioned = applyHierarchicalLayout(nodes, edges);
+
+  const childA = positioned.find((n) => n.id === 'child-a');
+  const childB = positioned.find((n) => n.id === 'child-b');
+  const gcA = positioned.find((n) => n.id === 'gc-a');
+  const gcB = positioned.find((n) => n.id === 'gc-b');
+
+  // Each grandchild should be closer to its own parent than to the other parent
+  assert.ok(
+    Math.abs(gcA.position.x - childA.position.x) < Math.abs(gcA.position.x - childB.position.x),
+  );
+  assert.ok(
+    Math.abs(gcB.position.x - childB.position.x) < Math.abs(gcB.position.x - childA.position.x),
+  );
+});
+
+test('transformTreeToGraph assigns directional labels to edges', () => {
+  const treeData = {
+    rootMember: { id: 'root', firstName: 'Root', lastName: 'Person' },
+    parents: [{ id: 'par-1', firstName: 'Parent', lastName: 'One' }],
+    children: [{ id: 'ch-1', firstName: 'Child', lastName: 'One' }],
+    spouses: [{ id: 'sp-1', firstName: 'Spouse', lastName: 'One' }],
+  };
+
+  const graph = transformTreeToGraph(treeData, 'tree');
+
+  const parentChildEdge = graph.edges.find((e) => e.data?.relationshipType === 'parent-child');
+  const spouseEdge = graph.edges.find((e) => e.data?.relationshipType === 'spouse');
+
+  assert.equal(parentChildEdge?.data?.label, 'Parent of');
+  assert.equal(spouseEdge?.data?.label, 'Married to');
+  // All edge visible labels start empty (shown only on hover/select in UI)
+  assert.ok(graph.edges.every((e) => e.label === ''));
+});

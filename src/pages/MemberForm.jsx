@@ -9,13 +9,14 @@ import { useUpdateMember } from '../hooks/useUpdateMember';
 import { memberSchema } from '../utils/validation';
 import { GENDER_OPTIONS, VITAL_STATUS_OPTIONS } from '../utils/constants';
 import LoadingSpinner from '../components/common/LoadingSpinner';
+import ProfilePhotoUploader from '../components/family/ProfilePhotoUploader';
 
 export default function MemberForm() {
   const { id } = useParams();
   const navigate = useNavigate();
   const isEdit = !!id;
 
-  const { member, loading: loadingMember } = useMemberDetail(id);
+  const { member, loading: loadingMember, refetch } = useMemberDetail(id);
   const { createMember, loading: creating } = useCreateMember();
   const { updateMember, loading: updating } = useUpdateMember();
 
@@ -129,12 +130,24 @@ export default function MemberForm() {
 
         {/* Form Card */}
         <div className="bg-white rounded-xl shadow-lg p-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            {isEdit ? 'Edit Family Member' : 'Add Family Member'}
-          </h1>
-          <p className="text-gray-600 mb-8">
-            {isEdit ? 'Update member information' : 'Add a new member to the family tree'}
-          </p>
+          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6 mb-8">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                {isEdit ? 'Edit Family Member' : 'Add Family Member'}
+              </h1>
+              <p className="text-gray-600">
+                {isEdit ? 'Update member information' : 'Add a new member to the family tree'}
+              </p>
+            </div>
+
+            {isEdit && member && (
+              <ProfilePhotoUploader
+                memberId={member.id}
+                currentPhotoPath={member.profilePhoto || member.photo || null}
+                onSuccess={refetch}
+              />
+            )}
+          </div>
 
           {error && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
@@ -150,7 +163,7 @@ export default function MemberForm() {
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
             {/* Debug form state */}
-            {process.env.NODE_ENV === 'development' && Object.keys(errors).length > 0 && (
+            {import.meta.env.DEV && Object.keys(errors).length > 0 && (
               <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
                 <p className="text-sm font-medium text-yellow-800 mb-2">Form Validation Errors:</p>
                 <ul className="text-xs text-yellow-700 list-disc list-inside">
