@@ -24,17 +24,26 @@ export function normalizeResponse(response) {
 export function handleApiError(error, defaultMessage) {
   if (error.response) {
     const message = error.response.data?.message;
+    const validationErrors = error.response.data?.errors;
+
+    const firstValidationMessage = Array.isArray(validationErrors)
+      ? validationErrors[0]?.message
+      : validationErrors && typeof validationErrors === 'object'
+        ? Object.values(validationErrors)[0]
+        : null;
 
     // Map status codes to user-friendly messages
     switch (error.response.status) {
       case 400:
-        return message || 'Invalid request. Please check your input.';
+        return firstValidationMessage || message || 'Invalid request. Please check your input.';
       case 401:
         return 'Your session has expired. Please log in again.';
       case 403:
         return 'You do not have permission to perform this action.';
       case 404:
         return message || 'The requested resource was not found.';
+      case 429:
+        return 'Too many requests right now. Please wait a moment and try again.';
       case 500:
         return 'Server error. Please try again later.';
       default:

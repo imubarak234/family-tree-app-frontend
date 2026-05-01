@@ -1,0 +1,24 @@
+{
+  "heroSlides": [
+    {
+      "image": "https://images.unsplash.com/photo-1511895426328-dc8714191011?w=1920&q=80&fit=crop&crop=center",
+      "headline": "Every Family Has a Story Worth Telling",
+      "sub": "Preserve your heritage, map your roots, and share the moments that make you who you are."
+    },
+    {
+      "image": "https://images.unsplash.com/photo-1474552226712-ac0f0961a954?w=1920&q=80&fit=crop&crop=center",
+      "headline": "Connect Across Generations",
+      "sub": "Build a living family tree that grows richer with every memory your family adds."
+    },
+    {
+      "image": "https://images.unsplash.com/photo-1602524816-a8d71c349a82?w=1920&q=80&fit=crop&crop=center",
+      "headline": "Never Miss What Matters Most",
+      "sub": "Birthdays, milestones, and daily moments — all in one place your whole family will treasure."
+    },
+    {
+      "image": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=1920&q=80&fit=crop&crop=center",
+      "headline": "Your Legacy, Beautifully Told",
+      "sub": "From the first photograph to the latest gathering, every chapter deserves to be remembered."
+    }
+  ]
+}

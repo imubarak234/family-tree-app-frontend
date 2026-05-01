@@ -1,10 +1,10 @@
 import { useNavigate } from 'react-router-dom';
-import { User, Edit, Eye } from 'lucide-react';
-import { formatDate, formatLifespan } from '../../utils/formatters';
+import { User, Edit, Eye, MapPin } from 'lucide-react';
+import { formatLifespan } from '../../utils/formatters';
 import { canEditMember } from '../../utils/permissions';
 import { useAuth } from '../../hooks/useAuth';
 
-export default function MemberCard({ member, onEdit }) {
+export default function MemberCard({ member }) {
   const navigate = useNavigate();
   const { user } = useAuth();
   const showEditButton = canEditMember(user, member);
@@ -48,6 +48,13 @@ export default function MemberCard({ member, onEdit }) {
         <p className="text-sm text-gray-600 mb-3">
           {formatLifespan(member.birthDate, member.deathDate, member.vitalStatus)}
         </p>
+
+        {(member.city || member.country) && (
+          <p className="text-sm text-gray-500 mb-3 flex items-start gap-1.5 truncate">
+            <MapPin className="w-4 h-4 mt-0.5 shrink-0" />
+            <span className="truncate">{[member.city, member.state, member.country].filter(Boolean).join(', ')}</span>
+          </p>
+        )}
 
         {/* Status Badge */}
         <div className="mb-4">

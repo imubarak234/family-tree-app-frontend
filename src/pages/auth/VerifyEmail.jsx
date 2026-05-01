@@ -19,17 +19,22 @@ export default function VerifyEmail() {
       setError('Please enter the verification code');
       return;
     }
+    if (!email) {
+      setError('Email not found. Please sign up again.');
+      return;
+    }
 
     try {
       setError('');
       setLoading(true);
-      await authAPI.confirmEmail(token);
-      setSuccess('Email verified successfully! Redirecting to login...');
+      await authAPI.verifySignup(email, token.trim());
+      setSuccess('Email verified! Redirecting...');
       setTimeout(() => {
-        navigate('/login');
-      }, 2000);
+        navigate('/pending-approval', { replace: true, state: { email } });
+      }, 1000);
     } catch (err) {
-      setError(err.response?.data?.message || 'Verification failed. Please try again.');
+      const msg = err.response?.data?.error?.message || err.response?.data?.message || 'Verification failed. Please try again.';
+      setError(msg);
     } finally {
       setLoading(false);
     }
@@ -68,8 +73,8 @@ export default function VerifyEmail() {
             Verify Your Email
           </h1>
           <p className="text-gray-600">
-            We sent a verification code to <br />
-            <span className="font-medium text-gray-900">{email}</span>
+            We sent a 6-digit verification code to <br />
+            <span className="font-medium text-gray-900">{email || 'your email'}</span>
           </p>
         </div>
 

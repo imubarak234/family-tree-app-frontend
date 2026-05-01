@@ -1,6 +1,7 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import ErrorBoundary from './components/layout/ErrorBoundary';
 import ProtectedRoute from './components/layout/ProtectedRoute';
+import AdminRoute from './components/layout/AdminRoute';
 import Navbar from './components/common/Navbar';
 
 // Auth Pages
@@ -11,6 +12,7 @@ import ForgotPassword from './pages/auth/ForgotPassword';
 import ResetPassword from './pages/auth/ResetPassword';
 import Confirm2FA from './pages/auth/Confirm2FA';
 import Profile from './pages/auth/Profile';
+import PendingApproval from './pages/auth/PendingApproval';
 
 // Family Pages
 import Dashboard from './pages/Dashboard';
@@ -19,6 +21,13 @@ import FamilyTree from './pages/FamilyTree';
 import MemberList from './pages/MemberList';
 import MemberDetail from './pages/MemberDetail';
 import MemberForm from './pages/MemberForm';
+import Landing from './pages/Landing';
+import Settings from './pages/Settings';
+
+// Admin Pages
+import SignupRequestsPage from './pages/admin/SignupRequestsPage';
+import UsersPage from './pages/admin/UsersPage';
+import RolesPage from './pages/admin/RolesPage';
 
 // Media Pages
 import PhotosPage from './pages/media/PhotosPage';
@@ -47,6 +56,7 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/confirm-2fa" element={<Confirm2FA />} />
+          <Route path="/pending-approval" element={<PendingApproval />} />
 
           {/* Protected Routes */}
           <Route
@@ -62,6 +72,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute>
+                <Settings />
               </ProtectedRoute>
             }
           />
@@ -228,8 +246,34 @@ function App() {
             }
           />
 
+          {/* Admin Routes */}
+          <Route
+            path="/admin/signup-requests"
+            element={
+              <AdminRoute>
+                <SignupRequestsPage />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/admin/users"
+            element={
+              <AdminRoute>
+                <UsersPage />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/admin/roles"
+            element={
+              <AdminRoute>
+                <RolesPage />
+              </AdminRoute>
+            }
+          />
+
           {/* Default Route */}
-          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="/" element={<Landing />} />
         </Routes>
       </div>
     </ErrorBoundary>

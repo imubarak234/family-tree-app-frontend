@@ -42,6 +42,12 @@ export const memberSchema = yup.object({
   occupation: yup.string(),
   email: yup.string().email('Invalid email format'),
   phone: yup.string(),
+  addressLine1: yup.string().max(255),
+  addressLine2: yup.string().max(255),
+  city: yup.string().max(100),
+  state: yup.string().max(100),
+  country: yup.string().max(100),
+  postalCode: yup.string().max(20),
   bio: yup.string(),
 });
 

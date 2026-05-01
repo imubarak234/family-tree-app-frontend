@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { Search, User, X } from 'lucide-react';
 import { useMembers } from '../../hooks/useMembers';
 import { useDebounce } from '../../hooks/useDebounce';
@@ -11,11 +11,12 @@ export default function MemberSearchDropdown({
   excludeMemberId,
   error,
   label = 'Select Member',
+  required = true,
+  showLabel = true,
   placeholder = 'Search for a family member...',
 }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
-  const [selectedMember, setSelectedMember] = useState(null);
   const dropdownRef = useRef(null);
 
   const debouncedSearch = useDebounce(searchTerm, 300);
@@ -24,11 +25,16 @@ export default function MemberSearchDropdown({
     name: debouncedSearch,
   });
 
-  console.log('Fetched members data:', data); // Debug log to check API response structure
-
   const members = (data?.members || []).filter(
     (member) => member.id !== excludeMemberId
   );
+
+  const selectedMember = useMemo(() => {
+    if (!value) {
+      return null;
+    }
+    return members.find((member) => String(member.id) === String(value)) || null;
+  }, [value, members]);
 
   // Handle click outside to close dropdown
   useEffect(() => {
@@ -43,14 +49,12 @@ export default function MemberSearchDropdown({
   }, []);
 
   const handleSelectMember = (member) => {
-    setSelectedMember(member);
     onChange(member.id);
     setSearchTerm('');
     setShowDropdown(false);
   };
 
   const handleClear = () => {
-    setSelectedMember(null);
     onChange('');
     setSearchTerm('');
   };
@@ -61,9 +65,11 @@ export default function MemberSearchDropdown({
 
   return (
     <div className="relative" ref={dropdownRef}>
-      <label className="block text-sm font-medium text-gray-700 mb-2">
-        {label} <span className="text-red-500">*</span>
-      </label>
+      {showLabel && (
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          {label} {required && <span className="text-red-500">*</span>}
+        </label>
+      )}
 
       {/* Selected Member Display or Search Input */}
       {selectedMember ? (

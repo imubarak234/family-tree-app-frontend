@@ -191,7 +191,7 @@ export default function MemberDetail() {
             </div>
 
             {/* Contact Information */}
-            {member.vitalStatus === 'Living' && (member.email || member.phone) && (
+            {(member.email || member.phone || member.city || member.addressLine1) && (
               <div className="bg-white rounded-xl shadow-md p-6">
                 <h2 className="text-xl font-bold text-gray-900 mb-4">Contact Information</h2>
                 <dl className="space-y-3">
@@ -218,6 +218,22 @@ export default function MemberDetail() {
                         <a href={`tel:${member.phone}`} className="text-blue-600 hover:underline">
                           {member.phone}
                         </a>
+                      </dd>
+                    </div>
+                  )}
+                  {(member.addressLine1 || member.city) && (
+                    <div>
+                      <dt className="flex items-center text-sm font-medium text-gray-500 mb-1">
+                        <MapPin className="w-4 h-4 mr-2" />
+                        Address
+                      </dt>
+                      <dd className="text-gray-900 space-y-0.5">
+                        {member.addressLine1 && <div>{member.addressLine1}</div>}
+                        {member.addressLine2 && <div>{member.addressLine2}</div>}
+                        {(member.city || member.state || member.postalCode) && (
+                          <div>{[member.city, member.state, member.postalCode].filter(Boolean).join(', ')}</div>
+                        )}
+                        {member.country && <div>{member.country}</div>}
                       </dd>
                     </div>
                   )}

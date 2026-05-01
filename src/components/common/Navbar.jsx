@@ -4,8 +4,9 @@ import { useAuth } from '../../hooks/useAuth';
 import {
   Home, Users, Calendar, User, LogOut,
   Image, FileText, Newspaper, CalendarClock, Clock4,
-  ChevronDown, Menu, X, Network,
+  ChevronDown, Menu, X, Network, Settings, ShieldCheck,
 } from 'lucide-react';
+import { isAdmin } from '../../utils/permissions';
 
 const NAV_GROUPS = [
   {
@@ -74,6 +75,8 @@ export default function Navbar() {
 
   const isGroupActive = (group) =>
     group.items.some((item) => location.pathname.startsWith(item.to));
+
+  const isAdminUser = isAdmin(user);
 
   if (!isAuthenticated) return null;
 
@@ -158,6 +161,50 @@ export default function Navbar() {
                 );
               })}
             </div>
+
+              {/* Admin dropdown (admin users only) */}
+              {isAdminUser && (
+                <div className="relative">
+                  <button
+                    onClick={() => toggleGroup('admin')}
+                    className={`inline-flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                      location.pathname.startsWith('/admin') || openGroup === 'admin'
+                        ? 'text-purple-600 bg-purple-50'
+                        : 'text-gray-700 hover:text-purple-600 hover:bg-gray-50'
+                    }`}
+                  >
+                    <ShieldCheck className="w-4 h-4 mr-1.5" />
+                    Admin
+                    <ChevronDown
+                      className={`w-3.5 h-3.5 ml-1 transition-transform duration-200 ${
+                        openGroup === 'admin' ? 'rotate-180' : ''
+                      }`}
+                    />
+                  </button>
+                  {openGroup === 'admin' && (
+                    <div className="absolute left-0 top-full mt-1 w-52 bg-white rounded-lg shadow-lg ring-1 ring-black/5 py-1">
+                      {[
+                        { label: 'Signup Requests', to: '/admin/signup-requests' },
+                        { label: 'Users', to: '/admin/users' },
+                        { label: 'Roles', to: '/admin/roles' },
+                      ].map((item) => (
+                        <Link
+                          key={item.to}
+                          to={item.to}
+                          className={`flex items-center px-4 py-2 text-sm transition-colors ${
+                            location.pathname.startsWith(item.to)
+                              ? 'text-purple-600 bg-purple-50 font-medium'
+                              : 'text-gray-700 hover:text-purple-600 hover:bg-gray-50'
+                          }`}
+                        >
+                          <ShieldCheck className="w-4 h-4 mr-2 shrink-0" />
+                          {item.label}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
           </div>
 
           {/* Right side: user info + icons */}
@@ -165,6 +212,13 @@ export default function Navbar() {
             <span className="hidden sm:block text-sm text-gray-600">
               {user?.firstname} {user?.lastname}
             </span>
+            <Link
+              to="/settings"
+              className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+              title="Settings"
+            >
+              <Settings className="w-5 h-5 text-gray-600" />
+            </Link>
             <Link
               to="/profile"
               className="p-2 rounded-full hover:bg-gray-100 transition-colors"
@@ -235,6 +289,44 @@ export default function Navbar() {
                 })}
               </div>
             ))}
+            <div className="pt-3 mt-2 border-t border-gray-100">
+              <Link
+                to="/settings"
+                className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  location.pathname === '/settings'
+                    ? 'text-blue-600 bg-blue-50'
+                    : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
+                }`}
+              >
+                <Settings className="w-4 h-4 mr-2" />
+                Settings
+              </Link>
+            </div>
+
+            {/* Admin section in mobile menu */}
+            {isAdminUser && (
+              <div className="pt-3 mt-2 border-t border-gray-100">
+                <p className="px-3 pb-1 text-xs font-semibold text-purple-400 uppercase tracking-wider">Admin</p>
+                {[
+                  { label: 'Signup Requests', to: '/admin/signup-requests' },
+                  { label: 'Users', to: '/admin/users' },
+                  { label: 'Roles', to: '/admin/roles' },
+                ].map((item) => (
+                  <Link
+                    key={item.to}
+                    to={item.to}
+                    className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                      location.pathname.startsWith(item.to)
+                        ? 'text-purple-600 bg-purple-50'
+                        : 'text-gray-700 hover:text-purple-600 hover:bg-gray-50'
+                    }`}
+                  >
+                    <ShieldCheck className="w-4 h-4 mr-2" />
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}

@@ -1,8 +1,29 @@
 import apiClient from './client';
 
+function cleanParams(params = {}) {
+  return Object.entries(params).reduce((acc, [key, value]) => {
+    if (value === '' || value === null || value === undefined) {
+      return acc;
+    }
+
+    if (typeof value === 'string') {
+      const trimmed = value.trim();
+      if (!trimmed) {
+        return acc;
+      }
+      acc[key] = trimmed;
+      return acc;
+    }
+
+    acc[key] = value;
+    return acc;
+  }, {});
+}
+
 export const familyAPI = {
   // Members
   getMembers: (params) => apiClient.get('/family/members', { params }),
+  getMembersAdvanced: (params) => apiClient.get('/family/members', { params: cleanParams(params) }),
   getMember: (id) => apiClient.get(`/family/members/${id}`),
   createMember: (data) => apiClient.post('/family/members', data),
   updateMember: (id, data) => apiClient.put(`/family/members/${id}`, data),
