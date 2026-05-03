@@ -16,25 +16,39 @@ import {
 } from 'lucide-react';
 import PublicNavbar from '../components/common/PublicNavbar';
 import landingContent from '../data/landingContent.json';
+import { utilitiesAPI } from '../api/utilities';
+// Slider images
+import sliderImg1 from '../assets/slider/landing-slider-1.jpg';
+import sliderImg2 from '../assets/slider/landing-slider-2.jpg';
+import sliderImg3 from '../assets/slider/landing-slider-3.jpg';
+import sliderImg4 from '../assets/slider/landing-slider-4.jpg';
+
+// Collage images (portrait-oriented, warm family photos)
+import collageImage1 from '../assets/collage/collage-1.jpg';
+import collageImage2 from '../assets/collage/collage-2.jpg';
+import collageImage3 from '../assets/collage/collage-3.jpg';
+
+import quoteImage from '../assets/quote.jpg';
 
 // ─── Content data ──────────────────────────────────────────────────────────
 
+const SLIDE_IMAGES = [sliderImg1, sliderImg2, sliderImg3, sliderImg4];
+
 const FALLBACK_HERO_SLIDE = {
-  image:
-    'https://images.unsplash.com/photo-1511895426328-dc8714191011?w=1920&q=80&fit=crop&crop=center',
+  image: sliderImg1,
   headline: 'Every Family Has a Story Worth Telling',
   sub: 'Preserve your heritage, map your roots, and share the moments that make you who you are.',
 };
 
 const HERO_SLIDES = Array.isArray(landingContent.heroSlides) && landingContent.heroSlides.length > 0
-  ? landingContent.heroSlides
+  ? landingContent.heroSlides.map((slide, i) => ({ ...slide, image: SLIDE_IMAGES[i] ?? slide.image }))
   : [FALLBACK_HERO_SLIDE];
 
 // Portrait-oriented warm family images for the hero story collage
 const COLLAGE_IMAGES = [
-  'https://images.unsplash.com/photo-1476703993599-0035a21b17a9?w=400&h=560&fit=crop&q=80',
-  'https://images.unsplash.com/photo-1499952127939-9bbf5af6c51c?w=400&h=560&fit=crop&q=80',
-  'https://images.unsplash.com/photo-1528825871115-3581a5387919?w=400&h=560&fit=crop&q=80',
+  collageImage1,
+  collageImage2,
+  collageImage3,
 ];
 
 const BENEFITS = [
@@ -136,8 +150,8 @@ const FEATURES = [
 
 const QUOTES = [
   {
-    text: 'In family life, love is the oil that eases friction, the cement that binds closer together, and the music that brings harmony.',
-    author: 'Friedrich Nietzsche',
+    text: 'O humanity! Be mindful of your Lord Who created you from a single soul, and from it He created its mate, and through both He spread countless men and women. And be mindful of Allah—in Whose Name you appeal to one another—and ˹honour˺ family ties. Surely Allah is ever Watchful over you',
+    author: 'The Women (4:1) — Dr. Mustafa Khattab, The Clear Quran',
   },
   {
     text: "The love of a family is life's greatest blessing — a legacy that grows more precious with every generation.",
@@ -146,8 +160,7 @@ const QUOTES = [
 ];
 
 // Portrait-oriented warm image for the quote section (same style contract as collage)
-const QUOTE_IMAGE =
-  'https://images.unsplash.com/photo-1543489822-c49534f3271f?w=600&h=800&fit=crop&q=80';
+const QUOTE_IMAGE = quoteImage;
 
 const FONT_SERIF = { fontFamily: "'Playfair Display', serif" };
 
@@ -163,6 +176,9 @@ export default function Landing() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [formLoading, setFormLoading] = useState(false);
+  const [formError, setFormError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState({});
 
   // Auto-advance hero slider every 5 s
   useEffect(() => {
@@ -177,12 +193,49 @@ export default function Landing() {
     return () => clearInterval(timer);
   }, []);
 
-  const handleFormChange = (e) =>
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  const handleFormChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    // Clear field error on change
+    if (fieldErrors[name]) setFieldErrors((prev) => ({ ...prev, [name]: '' }));
+  };
 
-  const handleFormSubmit = (e) => {
+  const validateContactForm = () => {
+    const errs = {};
+    if (!formData.name.trim() || formData.name.trim().length < 2)
+      errs.name = 'Full name must be at least 2 characters.';
+    if (!formData.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
+      errs.email = 'Please enter a valid email address.';
+    if (!formData.message.trim() || formData.message.trim().length < 10)
+      errs.message = 'Message must be at least 10 characters.';
+    return errs;
+  };
+
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
-    setFormSubmitted(true);
+    setFormError('');
+    const errs = validateContactForm();
+    if (Object.keys(errs).length > 0) {
+      setFieldErrors(errs);
+      return;
+    }
+    try {
+      setFormLoading(true);
+      await utilitiesAPI.contact({
+        fullName: formData.name.trim(),
+        email: formData.email.trim(),
+        message: formData.message.trim(),
+      });
+      setFormSubmitted(true);
+    } catch (err) {
+      const apiMsg =
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        'Something went wrong. Please try again.';
+      setFormError(apiMsg);
+    } finally {
+      setFormLoading(false);
+    }
   };
 
   const slide = HERO_SLIDES[currentSlide];
@@ -534,17 +587,17 @@ export default function Landing() {
       <section className="py-16 bg-gradient-to-r from-blue-600 to-purple-600">
         <div className="max-w-3xl mx-auto px-4 text-center">
           <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4" style={FONT_SERIF}>
-            Your family story deserves to be told.
+            Ahman Patigi's story deserves to be told.
           </h2>
           <p className="text-white/80 text-base mb-8 max-w-xl mx-auto">
-            Join families who are preserving their heritage and strengthening their bonds with
+            Are you a family member, friend, or historian who wants to preserve and share the rich legacy of the Ahman Patigi family? Join us in creating a lasting tribute to their history, stories, and connections. Start building the
             Ahman Patigi Family Tree.
           </p>
           <Link
             to="/signup"
             className="inline-flex items-center gap-2 bg-white text-blue-700 font-bold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
           >
-            Start Today — It&apos;s Free
+            Start Today — Sign Up for Free
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
@@ -584,6 +637,12 @@ export default function Landing() {
               onSubmit={handleFormSubmit}
               className="bg-white rounded-2xl p-8 shadow-md border border-gray-100 space-y-5"
             >
+              {formError && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
+                  {formError}
+                </div>
+              )}
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1.5">
@@ -593,12 +652,16 @@ export default function Landing() {
                     id="name"
                     name="name"
                     type="text"
-                    required
                     value={formData.name}
                     onChange={handleFormChange}
                     placeholder="Your name"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                    className={`w-full px-4 py-3 border rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition ${
+                      fieldErrors.name ? 'border-red-400' : 'border-gray-300'
+                    }`}
                   />
+                  {fieldErrors.name && (
+                    <p className="mt-1 text-xs text-red-600">{fieldErrors.name}</p>
+                  )}
                 </div>
                 <div>
                   <label
@@ -611,12 +674,16 @@ export default function Landing() {
                     id="email"
                     name="email"
                     type="email"
-                    required
                     value={formData.email}
                     onChange={handleFormChange}
                     placeholder="your@email.com"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                    className={`w-full px-4 py-3 border rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition ${
+                      fieldErrors.email ? 'border-red-400' : 'border-gray-300'
+                    }`}
                   />
+                  {fieldErrors.email && (
+                    <p className="mt-1 text-xs text-red-600">{fieldErrors.email}</p>
+                  )}
                 </div>
               </div>
 
@@ -631,20 +698,41 @@ export default function Landing() {
                   id="message"
                   name="message"
                   rows={5}
-                  required
                   value={formData.message}
                   onChange={handleFormChange}
                   placeholder="How can we help you?"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition resize-none"
+                  className={`w-full px-4 py-3 border rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition resize-none ${
+                    fieldErrors.message ? 'border-red-400' : 'border-gray-300'
+                  }`}
                 />
+                {fieldErrors.message && (
+                  <p className="mt-1 text-xs text-red-600">{fieldErrors.message}</p>
+                )}
               </div>
 
               <button
                 type="submit"
-                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3.5 rounded-xl shadow-md hover:shadow-lg transition-all"
+                disabled={formLoading}
+                className={`w-full flex items-center justify-center gap-2 text-white font-semibold py-3.5 rounded-xl shadow-md transition-all ${
+                  formLoading
+                    ? 'bg-gray-400 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 hover:shadow-lg'
+                }`}
               >
-                Send Message
-                <Send className="w-4 h-4" />
+                {formLoading ? (
+                  <>
+                    <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    </svg>
+                    Sending…
+                  </>
+                ) : (
+                  <>
+                    Send Message
+                    <Send className="w-4 h-4" />
+                  </>
+                )}
               </button>
               <p className="text-xs text-gray-400 text-center">
                 We typically respond within 2 business days.

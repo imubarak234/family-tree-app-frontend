@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { authAPI } from '../../api/auth';
 import { signupSchema } from '../../utils/validation';
+import 'react-phone-number-input/style.css'
+import PhoneInput from 'react-phone-number-input'
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -13,10 +15,27 @@ export default function Signup() {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(signupSchema),
   });
+
+  const payloadDefault = {
+    error: 'InvalidDataProvided',
+    message: 'Invalid data provided',
+    details: [
+      {
+        field: 'password',
+        message: 
+          'Password must include uppercase, lowercase, number, and special character'
+      },
+      {
+        field: 'phone',
+        message: 'Phone must be in international format'
+      }
+    ]
+  }
 
   const onSubmit = async (data) => {
     try {
@@ -30,7 +49,8 @@ export default function Signup() {
       // Navigate to verification page
       navigate('/verify-email', { state: { email: data.email } });
     } catch (err) {
-      setError(err.response?.data?.message || 'Signup failed. Please try again.');
+      console.log('Signup error:', err.response?.data);
+      setError(err.response?.data || 'Signup failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -53,7 +73,18 @@ export default function Signup() {
         <div className="bg-white rounded-xl shadow-lg p-8">
           {error && (
             <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-sm text-red-800">{error}</p>
+              <p className="text-sm text-red-800">{error.message}</p>
+              {
+                error.details && (
+                  <ul className="mt-2 text-sm text-red-600 list-disc list-inside">
+                    {error.details.map((detail, index) => (
+                      <li key={index}>
+                        <strong>{detail.field}:</strong> {detail.message}
+                      </li>
+                    ))}
+                  </ul>
+                )
+              }
             </div>
           )}
 
@@ -121,17 +152,27 @@ export default function Signup() {
 
             {/* Phone Field (Optional) */}
             <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Phone Number <span className="text-gray-400">(Optional)</span>
               </label>
-              <input
-                {...register('phone')}
-                id="phone"
-                type="tel"
-                autoComplete="tel"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-                placeholder="+234 800 000 0000"
+              <Controller
+                name="phone"
+                control={control}
+                render={({ field: { onChange, value } }) => (
+                  <PhoneInput
+                    international
+                    defaultCountry="NG"
+                    value={value}
+                    onChange={onChange}
+                    className={`phone-input w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
+                      errors.phone ? 'border-red-300' : 'border-gray-300'
+                    }`}
+                  />
+                )}
               />
+              {errors.phone && (
+                <p className="mt-1 text-sm text-red-600">{errors.phone.message}</p>
+              )}
             </div>
 
             {/* Password Field */}

@@ -13,13 +13,29 @@ export default function MemberCard({ member }) {
     navigate(`/family/members/${member.id}`);
   };
 
+  function getBackendOrigin() {
+    const baseUrl = import.meta.env?.VITE_API_BASE_URL || 'http://localhost:3000/api';
+    return baseUrl.replace(/\/api\/?$/, '');
+  }
+  
+  function getProfilePhotoUrl(profilePhoto) {
+    if (!profilePhoto) return null;
+    if (profilePhoto.startsWith('http://') || profilePhoto.startsWith('https://')) {
+      return profilePhoto;
+    }
+  
+    return `${getBackendOrigin()}/${profilePhoto.replace(/^\/+/, '')}`;
+  }
+
+  const displayPhoto = getProfilePhotoUrl(member.profilePhoto || member.photo);
+
   return (
     <div className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow overflow-hidden group">
       {/* Photo Section */}
       <div className="aspect-square bg-gradient-to-br from-blue-100 to-purple-100 relative overflow-hidden">
-        {member.photo ? (
+        {displayPhoto ? (
           <img
-            src={member.photo}
+            src={displayPhoto}
             alt={`${member.firstName} ${member.lastName}`}
             className="w-full h-full object-cover"
           />

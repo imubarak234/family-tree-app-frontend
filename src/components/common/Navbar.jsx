@@ -14,8 +14,8 @@ const NAV_GROUPS = [
     label: 'Family',
     icon: Users,
     items: [
-      { label: 'Members',   to: '/family/members',   icon: Users },
-      { label: 'Tree',      to: '/family/tree',      icon: Network },
+      { label: 'Members', to: '/family/members', icon: Users },
+      { label: 'Tree', to: '/family/tree', icon: Network },
       { label: 'Birthdays', to: '/family/birthdays', icon: Calendar },
     ],
   },
@@ -24,7 +24,7 @@ const NAV_GROUPS = [
     label: 'Media',
     icon: Image,
     items: [
-      { label: 'Photos',    to: '/media/photos',    icon: Image },
+      { label: 'Photos', to: '/media/photos', icon: Image },
       { label: 'Documents', to: '/media/documents', icon: FileText },
     ],
   },
@@ -33,8 +33,8 @@ const NAV_GROUPS = [
     label: 'Community',
     icon: Newspaper,
     items: [
-      { label: 'News',     to: '/news',     icon: Newspaper },
-      { label: 'Events',   to: '/events',   icon: CalendarClock },
+      { label: 'News', to: '/news', icon: Newspaper },
+      { label: 'Events', to: '/events', icon: CalendarClock },
       { label: 'Timeline', to: '/timeline', icon: Clock4 },
     ],
   },
@@ -64,6 +64,9 @@ export default function Navbar() {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setOpenGroup(null);
     setMobileOpen(false);
+    console.log('Route changed:', location.pathname);
+
+
   }, [location.pathname]);
 
   const handleLogout = async () => {
@@ -79,6 +82,11 @@ export default function Navbar() {
   const isAdminUser = isAdmin(user);
 
   if (!isAuthenticated) return null;
+
+  if (location?.pathname === '/') {
+    return null;
+  }
+
 
   return (
     <nav className="bg-white shadow-md relative z-50" ref={navRef}>
@@ -100,11 +108,10 @@ export default function Navbar() {
               {/* Home — direct link */}
               <Link
                 to="/dashboard"
-                className={`inline-flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  location.pathname === '/dashboard'
+                className={`inline-flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${location.pathname === '/dashboard'
                     ? 'text-blue-600 bg-blue-50'
                     : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
-                }`}
+                  }`}
               >
                 <Home className="w-4 h-4 mr-1.5" />
                 Home
@@ -119,18 +126,16 @@ export default function Navbar() {
                   <div key={group.id} className="relative">
                     <button
                       onClick={() => toggleGroup(group.id)}
-                      className={`inline-flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                        active || isOpen
+                      className={`inline-flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${active || isOpen
                           ? 'text-blue-600 bg-blue-50'
                           : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
-                      }`}
+                        }`}
                     >
                       <Icon className="w-4 h-4 mr-1.5" />
                       {group.label}
                       <ChevronDown
-                        className={`w-3.5 h-3.5 ml-1 transition-transform duration-200 ${
-                          isOpen ? 'rotate-180' : ''
-                        }`}
+                        className={`w-3.5 h-3.5 ml-1 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''
+                          }`}
                       />
                     </button>
 
@@ -144,11 +149,10 @@ export default function Navbar() {
                             <Link
                               key={item.to}
                               to={item.to}
-                              className={`flex items-center px-4 py-2 text-sm transition-colors ${
-                                itemActive
+                              className={`flex items-center px-4 py-2 text-sm transition-colors ${itemActive
                                   ? 'text-blue-600 bg-blue-50 font-medium'
                                   : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
-                              }`}
+                                }`}
                             >
                               <ItemIcon className="w-4 h-4 mr-2 shrink-0" />
                               {item.label}
@@ -162,49 +166,46 @@ export default function Navbar() {
               })}
             </div>
 
-              {/* Admin dropdown (admin users only) */}
-              {isAdminUser && (
-                <div className="relative">
-                  <button
-                    onClick={() => toggleGroup('admin')}
-                    className={`inline-flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                      location.pathname.startsWith('/admin') || openGroup === 'admin'
-                        ? 'text-purple-600 bg-purple-50'
-                        : 'text-gray-700 hover:text-purple-600 hover:bg-gray-50'
+            {/* Admin dropdown (admin users only) */}
+            {isAdminUser && (
+              <div className="relative">
+                <button
+                  onClick={() => toggleGroup('admin')}
+                  className={`inline-flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${location.pathname.startsWith('/admin') || openGroup === 'admin'
+                      ? 'text-purple-600 bg-purple-50'
+                      : 'text-gray-700 hover:text-purple-600 hover:bg-gray-50'
                     }`}
-                  >
-                    <ShieldCheck className="w-4 h-4 mr-1.5" />
-                    Admin
-                    <ChevronDown
-                      className={`w-3.5 h-3.5 ml-1 transition-transform duration-200 ${
-                        openGroup === 'admin' ? 'rotate-180' : ''
+                >
+                  <ShieldCheck className="w-4 h-4 mr-1.5" />
+                  Admin
+                  <ChevronDown
+                    className={`w-3.5 h-3.5 ml-1 transition-transform duration-200 ${openGroup === 'admin' ? 'rotate-180' : ''
                       }`}
-                    />
-                  </button>
-                  {openGroup === 'admin' && (
-                    <div className="absolute left-0 top-full mt-1 w-52 bg-white rounded-lg shadow-lg ring-1 ring-black/5 py-1">
-                      {[
-                        { label: 'Signup Requests', to: '/admin/signup-requests' },
-                        { label: 'Users', to: '/admin/users' },
-                        { label: 'Roles', to: '/admin/roles' },
-                      ].map((item) => (
-                        <Link
-                          key={item.to}
-                          to={item.to}
-                          className={`flex items-center px-4 py-2 text-sm transition-colors ${
-                            location.pathname.startsWith(item.to)
-                              ? 'text-purple-600 bg-purple-50 font-medium'
-                              : 'text-gray-700 hover:text-purple-600 hover:bg-gray-50'
+                  />
+                </button>
+                {openGroup === 'admin' && (
+                  <div className="absolute left-0 top-full mt-1 w-52 bg-white rounded-lg shadow-lg ring-1 ring-black/5 py-1">
+                    {[
+                      { label: 'Signup Requests', to: '/admin/signup-requests' },
+                      { label: 'Users', to: '/admin/users' },
+                      { label: 'Roles', to: '/admin/roles' },
+                    ].map((item) => (
+                      <Link
+                        key={item.to}
+                        to={item.to}
+                        className={`flex items-center px-4 py-2 text-sm transition-colors ${location.pathname.startsWith(item.to)
+                            ? 'text-purple-600 bg-purple-50 font-medium'
+                            : 'text-gray-700 hover:text-purple-600 hover:bg-gray-50'
                           }`}
-                        >
-                          <ShieldCheck className="w-4 h-4 mr-2 shrink-0" />
-                          {item.label}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
+                      >
+                        <ShieldCheck className="w-4 h-4 mr-2 shrink-0" />
+                        {item.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Right side: user info + icons */}
@@ -256,11 +257,10 @@ export default function Navbar() {
           <div className="px-4 py-3 space-y-1">
             <Link
               to="/dashboard"
-              className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                location.pathname === '/dashboard'
+              className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${location.pathname === '/dashboard'
                   ? 'text-blue-600 bg-blue-50'
                   : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
-              }`}
+                }`}
             >
               <Home className="w-4 h-4 mr-2" />
               Home
@@ -276,11 +276,10 @@ export default function Navbar() {
                     <Link
                       key={item.to}
                       to={item.to}
-                      className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                        location.pathname.startsWith(item.to)
+                      className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${location.pathname.startsWith(item.to)
                           ? 'text-blue-600 bg-blue-50'
                           : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
-                      }`}
+                        }`}
                     >
                       <ItemIcon className="w-4 h-4 mr-2" />
                       {item.label}
@@ -292,11 +291,10 @@ export default function Navbar() {
             <div className="pt-3 mt-2 border-t border-gray-100">
               <Link
                 to="/settings"
-                className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  location.pathname === '/settings'
+                className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${location.pathname === '/settings'
                     ? 'text-blue-600 bg-blue-50'
                     : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
-                }`}
+                  }`}
               >
                 <Settings className="w-4 h-4 mr-2" />
                 Settings
@@ -315,11 +313,10 @@ export default function Navbar() {
                   <Link
                     key={item.to}
                     to={item.to}
-                    className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                      location.pathname.startsWith(item.to)
+                    className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${location.pathname.startsWith(item.to)
                         ? 'text-purple-600 bg-purple-50'
                         : 'text-gray-700 hover:text-purple-600 hover:bg-gray-50'
-                    }`}
+                      }`}
                   >
                     <ShieldCheck className="w-4 h-4 mr-2" />
                     {item.label}
