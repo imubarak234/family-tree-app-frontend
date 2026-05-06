@@ -31,7 +31,7 @@ export function formatLifespan(birthDate, deathDate, vitalStatus) {
 
 export function getMediaUrl(filePath) {
   if (!filePath) return null;
-  return `${process.env.VITE_API_BASE_URL_UPLOAD}/${filePath}`;
+  return `${import.meta.env?.VITE_API_BASE_URL_UPLOAD}/${filePath}`;
 }
 
 export function formatFileSize(bytes) {
