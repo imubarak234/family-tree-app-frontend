@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import ErrorBoundary from './components/layout/ErrorBoundary';
 import ProtectedRoute from './components/layout/ProtectedRoute';
 import AdminRoute from './components/layout/AdminRoute';
+import FamilyScopeBoundary from './components/layout/FamilyScopeBoundary';
 import Navbar from './components/common/Navbar';
 
 // Auth Pages
@@ -23,11 +24,17 @@ import MemberDetail from './pages/MemberDetail';
 import MemberForm from './pages/MemberForm';
 import Landing from './pages/Landing';
 import Settings from './pages/Settings';
+import BillingPage from './pages/Billing';
+import BillingCheckoutReturnPage from './pages/billing/BillingCheckoutReturn';
 
 // Admin Pages
 import SignupRequestsPage from './pages/admin/SignupRequestsPage';
 import UsersPage from './pages/admin/UsersPage';
 import RolesPage from './pages/admin/RolesPage';
+import BillingPlansPage from './pages/admin/BillingPlansPage';
+import BillingSubscriptionsPage from './pages/admin/BillingSubscriptionsPage';
+import BillingFamilySummaryPage from './pages/admin/BillingFamilySummaryPage';
+import BillingActionsPage from './pages/admin/BillingActionsPage';
 
 // Media Pages
 import PhotosPage from './pages/media/PhotosPage';
@@ -44,6 +51,12 @@ import EventFormPage from './pages/social/EventFormPage';
 import TimelinePage from './pages/social/TimelinePage';
 
 function App() {
+  const familyRoute = (page) => (
+    <ProtectedRoute requireFamilyContext>
+      <FamilyScopeBoundary>{page}</FamilyScopeBoundary>
+    </ProtectedRoute>
+  );
+
   return (
     <ErrorBoundary>
       <div className="min-h-screen bg-gray-50">
@@ -83,167 +96,115 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/settings/billing"
+            element={
+              <ProtectedRoute>
+                <Settings />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/billing"
+            element={
+              <ProtectedRoute>
+                <BillingPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/billing/checkout/return"
+            element={
+              <ProtectedRoute>
+                <BillingCheckoutReturnPage />
+              </ProtectedRoute>
+            }
+          />
 
           {/* Family Member Routes */}
           <Route
             path="/family/members"
-            element={
-              <ProtectedRoute>
-                <MemberList />
-              </ProtectedRoute>
-            }
+            element={familyRoute(<MemberList />)}
           />
           <Route
             path="/family/members/new"
-            element={
-              <ProtectedRoute>
-                <MemberForm />
-              </ProtectedRoute>
-            }
+            element={familyRoute(<MemberForm />)}
           />
           <Route
             path="/family/members/:id"
-            element={
-              <ProtectedRoute>
-                <MemberDetail />
-              </ProtectedRoute>
-            }
+            element={familyRoute(<MemberDetail />)}
           />
           <Route
             path="/family/members/:id/edit"
-            element={
-              <ProtectedRoute>
-                <MemberForm />
-              </ProtectedRoute>
-            }
+            element={familyRoute(<MemberForm />)}
           />
 
           {/* Media Routes */}
           <Route
             path="/media/photos"
-            element={
-              <ProtectedRoute>
-                <PhotosPage />
-              </ProtectedRoute>
-            }
+            element={familyRoute(<PhotosPage />)}
           />
           <Route
             path="/media/photos/:id"
-            element={
-              <ProtectedRoute>
-                <MediaDetail />
-              </ProtectedRoute>
-            }
+            element={familyRoute(<MediaDetail />)}
           />
           <Route
             path="/media/documents"
-            element={
-              <ProtectedRoute>
-                <DocumentsPage />
-              </ProtectedRoute>
-            }
+            element={familyRoute(<DocumentsPage />)}
           />
           <Route
             path="/media/documents/:id"
-            element={
-              <ProtectedRoute>
-                <MediaDetail />
-              </ProtectedRoute>
-            }
+            element={familyRoute(<MediaDetail />)}
           />
 
           {/* Social Routes */}
           <Route
             path="/news"
-            element={
-              <ProtectedRoute>
-                <NewsListPage />
-              </ProtectedRoute>
-            }
+            element={familyRoute(<NewsListPage />)}
           />
           <Route
             path="/news/new"
-            element={
-              <ProtectedRoute>
-                <NewsFormPage />
-              </ProtectedRoute>
-            }
+            element={familyRoute(<NewsFormPage />)}
           />
           <Route
             path="/news/:id"
-            element={
-              <ProtectedRoute>
-                <NewsDetailPage />
-              </ProtectedRoute>
-            }
+            element={familyRoute(<NewsDetailPage />)}
           />
           <Route
             path="/news/:id/edit"
-            element={
-              <ProtectedRoute>
-                <NewsFormPage />
-              </ProtectedRoute>
-            }
+            element={familyRoute(<NewsFormPage />)}
           />
 
           <Route
             path="/events"
-            element={
-              <ProtectedRoute>
-                <EventsListPage />
-              </ProtectedRoute>
-            }
+            element={familyRoute(<EventsListPage />)}
           />
           <Route
             path="/events/new"
-            element={
-              <ProtectedRoute>
-                <EventFormPage />
-              </ProtectedRoute>
-            }
+            element={familyRoute(<EventFormPage />)}
           />
           <Route
             path="/events/:id"
-            element={
-              <ProtectedRoute>
-                <EventDetailPage />
-              </ProtectedRoute>
-            }
+            element={familyRoute(<EventDetailPage />)}
           />
           <Route
             path="/events/:id/edit"
-            element={
-              <ProtectedRoute>
-                <EventFormPage />
-              </ProtectedRoute>
-            }
+            element={familyRoute(<EventFormPage />)}
           />
 
           <Route
             path="/timeline"
-            element={
-              <ProtectedRoute>
-                <TimelinePage />
-              </ProtectedRoute>
-            }
+            element={familyRoute(<TimelinePage />)}
           />
 
           {/* Coming Soon Routes */}
           <Route
             path="/family/tree"
-            element={
-              <ProtectedRoute>
-                <FamilyTree />
-              </ProtectedRoute>
-            }
+            element={familyRoute(<FamilyTree />)}
           />
           <Route
             path="/family/birthdays"
-            element={
-              <ProtectedRoute>
-                <BirthdayPage />
-              </ProtectedRoute>
-            }
+            element={familyRoute(<BirthdayPage />)}
           />
 
           {/* Admin Routes */}
@@ -268,6 +229,38 @@ function App() {
             element={
               <AdminRoute>
                 <RolesPage />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/admin/billing/plans"
+            element={
+              <AdminRoute>
+                <BillingPlansPage />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/admin/billing/subscriptions"
+            element={
+              <AdminRoute>
+                <BillingSubscriptionsPage />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/admin/billing/families"
+            element={
+              <AdminRoute>
+                <BillingFamilySummaryPage />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/admin/billing/actions"
+            element={
+              <AdminRoute>
+                <BillingActionsPage />
               </AdminRoute>
             }
           />

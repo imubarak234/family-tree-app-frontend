@@ -1,0 +1,430 @@
+let mix = {
+    "isSuccess": true,
+    "message": "Successful",
+    "totalRecords": 30,
+    "data": [
+        {
+            "userId": "00c5fb88-8edb-4e9b-a604-566c876dc9d0",
+            "email": "jmuhammad3@cbn.gov.ng",
+            "firstName": "Jibrin",
+            "lastName": "Muhammad",
+            "middleName": "Adamu",
+            "fullName": "Jibrin Adamu Muhammad",
+            "institutionCode": "00011",
+            "userType": "FINANCIAL_INSTITUTION",
+            "gender": "MALE",
+            "staffId": "0958887",
+            "isActive": true,
+            "phoneNumber": "080645646",
+            "createdDate": "2026-05-20T16:33:30.6658641+01:00",
+            "institutionName": "First Bank ",
+            "isExternalUser": true,
+            "roles": [
+                "FI_ADMIN"
+            ],
+            "userName": "jmuhammad3@cbn.gov.ng"
+        },
+        {
+            "userId": "03e3a67b-c25f-476e-ba90-dc228b1482d9",
+            "email": "PEDAVID@CBN.GOV.NG",
+            "firstName": "PRINCESS",
+            "lastName": "DAVID",
+            "middleName": "EUCHARIA",
+            "fullName": "PRINCESS EUCHARIA DAVID",
+            "institutionCode": "00001",
+            "userType": "INTERNAL",
+            "gender": "FEMALE",
+            "staffId": "DAVID20708",
+            "isActive": true,
+            "phoneNumber": "",
+            "createdDate": "2026-04-07T14:35:33.555199+01:00",
+            "institutionName": "CENTRAL BANK OF NIGERIA",
+            "isExternalUser": false,
+            "roles": [
+                "FIRST_LEVEL_APPROVAL"
+            ],
+            "userName": "DAVID20708"
+        },
+        {
+            "userId": "0b4a9e37-7974-4953-adb0-0f8cca3d5d97",
+            "email": "stephenson.eneh@fcmb.com",
+            "firstName": "STEPHENSON",
+            "lastName": "ENEH",
+            "middleName": "IKECHUKWU",
+            "fullName": "STEPHENSON IKECHUKWU ENEH",
+            "institutionCode": "00214",
+            "userType": "FINANCIAL_INSTITUTION",
+            "gender": "MALE",
+            "staffId": "2967",
+            "isActive": true,
+            "phoneNumber": "0901137835",
+            "createdDate": "2026-05-25T16:57:31.0756205+01:00",
+            "institutionName": "FIrst City Monument Bank Plc",
+            "isExternalUser": true,
+            "roles": [
+                "FI_ADMIN"
+            ],
+            "userName": "stephenson.eneh@fcmb.com"
+        },
+        {
+            "userId": "0c76bae7-273f-4037-b9be-cf8529213cda",
+            "email": "ABAMINU@CBN.GOV.NG",
+            "firstName": "AMINU",
+            "lastName": "AMINU",
+            "middleName": "BASHIR",
+            "fullName": "AMINU BASHIR AMINU",
+            "institutionCode": "00001",
+            "userType": "INTERNAL",
+            "gender": "MALE",
+            "staffId": "AMINU22213",
+            "isActive": true,
+            "phoneNumber": "",
+            "createdDate": "2026-04-07T14:41:53.4297612+01:00",
+            "institutionName": "CENTRAL BANK OF NIGERIA",
+            "isExternalUser": false,
+            "roles": [
+                "FIRST_LEVEL_APPROVAL"
+            ],
+            "userName": "AMINU22213"
+        },
+        {
+            "userId": "0ed8ef75-3acd-4876-9eff-0079c811d617",
+            "email": "norah.okodugha@fcmb.com",
+            "firstName": "NORA",
+            "lastName": "UGORJI-OKODUGHA",
+            "middleName": "",
+            "fullName": "NORA  UGORJI-OKODUGHA",
+            "institutionCode": "00214",
+            "userType": "FINANCIAL_INSTITUTION",
+            "gender": "FEMALE",
+            "staffId": "19590",
+            "isActive": true,
+            "phoneNumber": "08034073127",
+            "createdDate": "2026-05-25T16:55:25.7296412+01:00",
+            "institutionName": "FIrst City Monument Bank Plc",
+            "isExternalUser": true,
+            "roles": [
+                "FI_ADMIN"
+            ],
+            "userName": "norah.okodugha@fcmb.com"
+        },
+        {
+            "userId": "1918e2e7-d73a-4d03-9d4a-314890002c62",
+            "email": "nnenna.ndubueze@accessbankplc.com",
+            "firstName": "NNENNA",
+            "lastName": "NDUBUEZE",
+            "middleName": "CHINYERE",
+            "fullName": "NNENNA CHINYERE NDUBUEZE",
+            "institutionCode": "00044",
+            "userType": "FINANCIAL_INSTITUTION",
+            "gender": "FEMALE",
+            "staffId": "12731419",
+            "isActive": true,
+            "phoneNumber": "08036996585",
+            "createdDate": "2026-05-25T17:06:27.4499635+01:00",
+            "institutionName": "Access Bank Plc",
+            "isExternalUser": true,
+            "roles": [
+                "FI_ADMIN"
+            ],
+            "userName": "nnenna.ndubueze@accessbankplc.com"
+        },
+        {
+            "userId": "1ed62070-cd78-4686-8dc5-111bc3fb90b4",
+            "email": "TGALLU@CBN.GOV.NG",
+            "firstName": "TIKU",
+            "lastName": "ALLU",
+            "middleName": "ALLU",
+            "fullName": "TIKU ALLU ALLU",
+            "institutionCode": "00001",
+            "userType": "INTERNAL",
+            "gender": "MALE",
+            "staffId": "ALLU21154",
+            "isActive": true,
+            "phoneNumber": "",
+            "createdDate": "2026-04-07T14:18:46.273742+01:00",
+            "institutionName": "CENTRAL BANK OF NIGERIA",
+            "isExternalUser": false,
+            "roles": [
+                "SECOND_LEVEL_APPROVAL"
+            ],
+            "userName": "ALLU21154"
+        },
+        {
+            "userId": "2bc50b6c-df94-4d13-82b1-f7b63ebd13af",
+            "email": "RMOHAMMED2@CBN.GOV.NG",
+            "firstName": "RABI",
+            "lastName": "MOHAMMED",
+            "middleName": "RABI",
+            "fullName": "RABI RABI MOHAMMED",
+            "institutionCode": "00001",
+            "userType": "INTERNAL",
+            "gender": "FEMALE",
+            "staffId": "MOHAMMED26336",
+            "isActive": true,
+            "phoneNumber": "",
+            "createdDate": "2026-04-07T14:52:10.2703047+01:00",
+            "institutionName": "CENTRAL BANK OF NIGERIA",
+            "isExternalUser": false,
+            "roles": [
+                "REVIEWER"
+            ],
+            "userName": "MOHAMMED26336"
+        },
+        {
+            "userId": "2fd32177-2b3c-4266-9505-5d0dbc7e4e4d",
+            "email": "OSEZIKE@CBN.GOV.NG",
+            "firstName": "OLUCHI",
+            "lastName": "EZIKE",
+            "middleName": "SONIA",
+            "fullName": "OLUCHI SONIA EZIKE",
+            "institutionCode": "00001",
+            "userType": "INTERNAL",
+            "gender": "FEMALE",
+            "staffId": "EZIKE23080",
+            "isActive": true,
+            "phoneNumber": "",
+            "createdDate": "2026-04-07T14:49:23.988611+01:00",
+            "institutionName": "CENTRAL BANK OF NIGERIA",
+            "isExternalUser": false,
+            "roles": [
+                "REVIEWER"
+            ],
+            "userName": "EZIKE23080"
+        },
+        {
+            "userId": "31448b8d-1040-44ff-be22-f8a848fcc555",
+            "email": "KJSHIMANG@CBN.GOV.NG",
+            "firstName": "KITSHIWE",
+            "lastName": "SHIMANG",
+            "middleName": "JOHNPAUL",
+            "fullName": "KITSHIWE JOHNPAUL SHIMANG",
+            "institutionCode": "00001",
+            "userType": "INTERNAL",
+            "gender": "MALE",
+            "staffId": "SHIMANG20812",
+            "isActive": true,
+            "phoneNumber": "",
+            "createdDate": "2026-04-07T14:30:20.2703559+01:00",
+            "institutionName": "CENTRAL BANK OF NIGERIA",
+            "isExternalUser": false,
+            "roles": [
+                "SECOND_LEVEL_APPROVAL"
+            ],
+            "userName": "SHIMANG20812"
+        },
+        {
+            "userId": "43350e56-5dad-47f6-854d-82708eba8606",
+            "email": "christopher.idogei@zenithbank.com",
+            "firstName": "CHRISTOPHER",
+            "lastName": "IDOGEI",
+            "middleName": "",
+            "fullName": "CHRISTOPHER  IDOGEI",
+            "institutionCode": "00057",
+            "userType": "FINANCIAL_INSTITUTION",
+            "gender": "MALE",
+            "staffId": "20082120",
+            "isActive": true,
+            "phoneNumber": "07040003741",
+            "createdDate": "2026-05-25T17:34:12.6642459+01:00",
+            "institutionName": "Zenith Bank Nigeria Plc",
+            "isExternalUser": true,
+            "roles": [
+                "FI_ADMIN"
+            ],
+            "userName": "christopher.idogei@zenithbank.com"
+        },
+        {
+            "userId": "4844c5b5-89c1-49bf-9b84-920032da7bd6",
+            "email": "DAMILOLA.ATOLAGBE@GTBANK.COM",
+            "firstName": "DAMILOLA",
+            "lastName": "ATOLAGBE",
+            "middleName": "SAMUEL",
+            "fullName": "DAMILOLA SAMUEL ATOLAGBE",
+            "institutionCode": "00058",
+            "userType": "FINANCIAL_INSTITUTION",
+            "gender": "MALE",
+            "staffId": "8480",
+            "isActive": true,
+            "phoneNumber": "08133100387",
+            "createdDate": "2026-05-25T17:11:04.6848146+01:00",
+            "institutionName": "Guaranty Trust Bank Limited",
+            "isExternalUser": true,
+            "roles": [
+                "FI_ADMIN"
+            ],
+            "userName": "DAMILOLA.ATOLAGBE@GTBANK.COM"
+        },
+        {
+            "userId": "4a15ccce-7322-43b4-b94e-26775ab6d5a5",
+            "email": "shithappens242@gmail.com",
+            "firstName": "TestUser",
+            "lastName": "Create",
+            "middleName": "Test",
+            "fullName": "TestUser Test Create",
+            "institutionCode": "00001",
+            "userType": "INTERNAL",
+            "gender": "MALE",
+            "staffId": "MDJ2929J",
+            "isActive": true,
+            "phoneNumber": "8092727734",
+            "createdDate": "2026-04-07T13:59:56.2686829+01:00",
+            "institutionName": "CENTRAL BANK OF NIGERIA",
+            "isExternalUser": false,
+            "roles": [
+                "ISMD_ADMIN"
+            ],
+            "userName": "MDJ2929J"
+        },
+        {
+            "userId": "4d185bec-9aee-4474-ab0f-1f096d02c4bb",
+            "email": "francis.akinbola@ubagroup.com",
+            "firstName": "FRANCIS",
+            "lastName": "AKINBOLA",
+            "middleName": "",
+            "fullName": "FRANCIS  AKINBOLA",
+            "institutionCode": "00033",
+            "userType": "FINANCIAL_INSTITUTION",
+            "gender": "MALE",
+            "staffId": "A14900",
+            "isActive": true,
+            "phoneNumber": "08028560071",
+            "createdDate": "2026-05-25T16:59:36.1545468+01:00",
+            "institutionName": "United Bank for Africa Plc",
+            "isExternalUser": true,
+            "roles": [
+                "FI_ADMIN"
+            ],
+            "userName": "francis.akinbola@ubagroup.com"
+        },
+        {
+            "userId": "5b362cb4-c427-4e55-ab62-1c0b33d8109d",
+            "email": "gabriel.okorie@ubagroup.com",
+            "firstName": "GABRIEL",
+            "lastName": "OKORIE",
+            "middleName": "",
+            "fullName": "GABRIEL  OKORIE",
+            "institutionCode": "00033",
+            "userType": "FINANCIAL_INSTITUTION",
+            "gender": "MALE",
+            "staffId": "A34041",
+            "isActive": true,
+            "phoneNumber": "08109545119",
+            "createdDate": "2026-05-25T17:01:12.9531205+01:00",
+            "institutionName": "United Bank for Africa Plc",
+            "isExternalUser": true,
+            "roles": [
+                "FI_ADMIN"
+            ],
+            "userName": "gabriel.okorie@ubagroup.com"
+        },
+        {
+            "userId": "6172ad5b-1770-4c0d-be12-7c417e0225a8",
+            "email": "DYWUYEP@CBN.GOV.NG",
+            "firstName": "DEBORAH",
+            "lastName": "WUYEP",
+            "middleName": "YARMIKAT",
+            "fullName": "DEBORAH YARMIKAT WUYEP",
+            "institutionCode": "00001",
+            "userType": "INTERNAL",
+            "gender": "FEMALE",
+            "staffId": "WUYEP19930",
+            "isActive": true,
+            "phoneNumber": "",
+            "createdDate": "2026-04-07T14:26:00.9259726+01:00",
+            "institutionName": "CENTRAL BANK OF NIGERIA",
+            "isExternalUser": false,
+            "roles": [
+                "FIRST_LEVEL_APPROVAL"
+            ],
+            "userName": "WUYEP19930"
+        },
+        {
+            "userId": "664caa30-be58-4777-896e-ef94e3848083",
+            "email": "bfc.admin@bfc.local",
+            "firstName": "SYSTEM",
+            "lastName": "ADMIN",
+            "middleName": "",
+            "fullName": "SYSTEM  ADMIN",
+            "institutionCode": "00001",
+            "userType": "INTERNAL",
+            "gender": "MALE",
+            "staffId": "00001",
+            "isActive": true,
+            "phoneNumber": null,
+            "createdDate": "0001-01-01T00:00:00+00:00",
+            "institutionName": "CENTRAL BANK OF NIGERIA",
+            "isExternalUser": false,
+            "roles": [
+                "SUPERADMIN_ROLE"
+            ],
+            "userName": "bfc.admin@bfc.local"
+        },
+        {
+            "userId": "67aac4bf-5525-4930-9c95-46f2a88c7724",
+            "email": "maibrahim4@cbn.gov.ng",
+            "firstName": "Mubarak",
+            "lastName": "Ibrahim",
+            "middleName": "",
+            "fullName": "Mubarak  Ibrahim",
+            "institutionCode": "00001",
+            "userType": "INTERNAL",
+            "gender": "MALE",
+            "staffId": "ibrahim27752",
+            "isActive": true,
+            "phoneNumber": "0902837745",
+            "createdDate": "2026-02-18T11:22:56.111586+01:00",
+            "institutionName": "CENTRAL BANK OF NIGERIA",
+            "isExternalUser": false,
+            "roles": [
+                "SECOND_LEVEL_APPROVAL",
+                "FIRST_LEVEL_APPROVAL",
+                "SUPERADMIN_ROLE"
+            ],
+            "userName": "ibrahim27752"
+        },
+        {
+            "userId": "731ca957-decb-4812-af3c-09bf2143a31d",
+            "email": "TEMITOPE.JAIYESIMI@GTBANK.COM",
+            "firstName": "TEMITOPE",
+            "lastName": "JAIYESIMI",
+            "middleName": "JONATHAN",
+            "fullName": "TEMITOPE JONATHAN JAIYESIMI",
+            "institutionCode": "00058",
+            "userType": "FINANCIAL_INSTITUTION",
+            "gender": "MALE",
+            "staffId": "9157",
+            "isActive": true,
+            "phoneNumber": "08115048423",
+            "createdDate": "2026-05-25T17:14:08.9564221+01:00",
+            "institutionName": "Guaranty Trust Bank Limited",
+            "isExternalUser": true,
+            "roles": [
+                "FI_ADMIN"
+            ],
+            "userName": "TEMITOPE.JAIYESIMI@GTBANK.COM"
+        },
+        {
+            "userId": "76e84f23-41c3-4022-bc92-1169152551a1",
+            "email": "JADO@CBN.GOV.NG",
+            "firstName": "JAMILU",
+            "lastName": "ADO",
+            "middleName": "",
+            "fullName": "JAMILU  ADO",
+            "institutionCode": "00001",
+            "userType": "INTERNAL",
+            "gender": "MALE",
+            "staffId": "ADO23324",
+            "isActive": true,
+            "phoneNumber": "",
+            "createdDate": "2026-04-07T14:20:43.0385275+01:00",
+            "institutionName": "CENTRAL BANK OF NIGERIA",
+            "isExternalUser": false,
+            "roles": [
+                "SECOND_LEVEL_APPROVAL"
+            ],
+            "userName": "ADO23324"
+        }
+    ],
+    "errors": []
+}

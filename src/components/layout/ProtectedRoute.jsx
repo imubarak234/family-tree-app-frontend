@@ -1,8 +1,9 @@
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 
-export default function ProtectedRoute({ children }) {
-  const { isAuthenticated, loading } = useAuth();
+export default function ProtectedRoute({ children, requireFamilyContext = false }) {
+  const location = useLocation();
+  const { isAuthenticated, loading, activeFamilyId, isGlobalAdmin, globalModeEnabled, globalAccess, contextStatus } = useAuth();
 
   if (loading) {
     return (
@@ -14,6 +15,15 @@ export default function ProtectedRoute({ children }) {
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
+  }
+
+  const canUseGlobalMode = Boolean(isGlobalAdmin && globalModeEnabled && globalAccess);
+  const missingFamilyContext = requireFamilyContext && !activeFamilyId && !canUseGlobalMode;
+
+  if (missingFamilyContext || contextStatus === 'missing-family-context') {
+    if (location.pathname !== '/dashboard') {
+      return <Navigate to="/dashboard" replace state={{ contextRecovery: true, from: location.pathname }} />;
+    }
   }
 
   return children;

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { Link, useLocation } from 'react-router-dom';
 import {
   CheckCircle2,
   AlertTriangle,
@@ -13,6 +14,7 @@ import {
 } from 'lucide-react';
 import { useSettings } from '../hooks/useSettings';
 import LoadingSpinner from '../components/common/LoadingSpinner';
+import SettingsBillingSection from '../components/billing/SettingsBillingSection';
 
 const LANGUAGE_OPTIONS = [
   { value: 'en', label: 'English' },
@@ -44,6 +46,7 @@ function buildApiAbsoluteUrl(path) {
 }
 
 export default function Settings() {
+  const location = useLocation();
   const {
     settings,
     loading,
@@ -128,6 +131,7 @@ export default function Settings() {
 
   const docsUrl = useMemo(() => buildApiAbsoluteUrl('/docs'), []);
   const docsJsonUrl = useMemo(() => buildApiAbsoluteUrl('/docs.json'), []);
+  const billingOnlyView = location.pathname === '/settings/billing';
 
   if (loading) {
     return (
@@ -147,6 +151,21 @@ export default function Settings() {
           <p className="mt-2 text-gray-600">Manage your notification, privacy, and preferences.</p>
         </div>
 
+        <div className="flex flex-wrap items-center gap-2">
+          <Link
+            to="/settings"
+            className={`px-3 py-1.5 rounded-lg text-sm font-medium border ${billingOnlyView ? 'border-gray-300 text-gray-700 hover:bg-gray-50' : 'border-blue-300 bg-blue-50 text-blue-700'}`}
+          >
+            General Settings
+          </Link>
+          <Link
+            to="/settings/billing"
+            className={`px-3 py-1.5 rounded-lg text-sm font-medium border ${billingOnlyView ? 'border-blue-300 bg-blue-50 text-blue-700' : 'border-gray-300 text-gray-700 hover:bg-gray-50'}`}
+          >
+            Billing
+          </Link>
+        </div>
+
         {(error || localError) && (
           <div className="p-4 rounded-lg border border-red-200 bg-red-50 text-red-800 text-sm">
             {localError || error}
@@ -160,7 +179,8 @@ export default function Settings() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        {!billingOnlyView && (
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <section className="bg-white border border-gray-100 shadow-sm rounded-xl p-6">
             <div className="flex items-center gap-2 mb-4">
               <Bell className="w-5 h-5 text-blue-600" />
@@ -229,9 +249,13 @@ export default function Settings() {
               Reset changes
             </button>
           </div>
-        </form>
+          </form>
+        )}
 
-        <section className="bg-white border border-gray-100 shadow-sm rounded-xl p-6">
+        <SettingsBillingSection />
+
+        {!billingOnlyView && (
+          <section className="bg-white border border-gray-100 shadow-sm rounded-xl p-6">
           <div className="flex items-center gap-2 mb-4">
             <SettingsIcon className="w-5 h-5 text-blue-600" />
             <h2 className="text-lg font-semibold text-gray-900">Developer Tools</h2>
@@ -283,7 +307,8 @@ export default function Settings() {
             <ChecklistItem checked label="Pagination wired" />
             <ChecklistItem checked label="Error handling verified" />
           </ul>
-        </section>
+          </section>
+        )}
       </div>
     </div>
   );

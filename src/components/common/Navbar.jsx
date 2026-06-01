@@ -4,9 +4,10 @@ import { useAuth } from '../../hooks/useAuth';
 import {
   Home, Users, Calendar, User, LogOut,
   Image, FileText, Newspaper, CalendarClock, Clock4,
-  ChevronDown, Menu, X, Network, Settings, ShieldCheck,
+  ChevronDown, Menu, X, Network, Settings, ShieldCheck, CreditCard,
 } from 'lucide-react';
 import { isAdmin } from '../../utils/permissions';
+import FamilyContextSwitcher from './FamilyContextSwitcher';
 
 const NAV_GROUPS = [
   {
@@ -41,7 +42,7 @@ const NAV_GROUPS = [
 ];
 
 export default function Navbar() {
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, user, logout, activeFamilyName, globalModeEnabled, isGlobalAdmin, globalAccess } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [openGroup, setOpenGroup] = useState(null);
@@ -64,9 +65,6 @@ export default function Navbar() {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setOpenGroup(null);
     setMobileOpen(false);
-    console.log('Route changed:', location.pathname);
-
-
   }, [location.pathname]);
 
   const handleLogout = async () => {
@@ -115,6 +113,17 @@ export default function Navbar() {
               >
                 <Home className="w-4 h-4 mr-1.5" />
                 Home
+              </Link>
+
+              <Link
+                to="/billing"
+                className={`inline-flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${location.pathname.startsWith('/billing')
+                    ? 'text-blue-600 bg-blue-50'
+                    : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
+                  }`}
+              >
+                <CreditCard className="w-4 h-4 mr-1.5" />
+                Billing
               </Link>
 
               {/* Dropdown groups */}
@@ -189,6 +198,10 @@ export default function Navbar() {
                       { label: 'Signup Requests', to: '/admin/signup-requests' },
                       { label: 'Users', to: '/admin/users' },
                       { label: 'Roles', to: '/admin/roles' },
+                      { label: 'Billing Plans', to: '/admin/billing/plans' },
+                      { label: 'Billing Subscriptions', to: '/admin/billing/subscriptions' },
+                      { label: 'Family Billing Summary', to: '/admin/billing/families' },
+                      { label: 'Billing Actions', to: '/admin/billing/actions' },
                     ].map((item) => (
                       <Link
                         key={item.to}
@@ -210,6 +223,18 @@ export default function Navbar() {
 
           {/* Right side: user info + icons */}
           <div className="flex items-center space-x-2">
+            <div className="hidden lg:flex items-center gap-2">
+              {globalModeEnabled && isGlobalAdmin && globalAccess ? (
+                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
+                  Global mode
+                </span>
+              ) : activeFamilyName ? (
+                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200 max-w-40 truncate">
+                  {activeFamilyName}
+                </span>
+              ) : null}
+              <FamilyContextSwitcher />
+            </div>
             <span className="hidden sm:block text-sm text-gray-600">
               {user?.firstname} {user?.lastname}
             </span>
@@ -255,6 +280,9 @@ export default function Navbar() {
       {mobileOpen && (
         <div className="md:hidden border-t border-gray-100 bg-white shadow-md">
           <div className="px-4 py-3 space-y-1">
+            <div className="pb-2">
+              <FamilyContextSwitcher variant="panel" forceVisible />
+            </div>
             <Link
               to="/dashboard"
               className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${location.pathname === '/dashboard'
@@ -264,6 +292,16 @@ export default function Navbar() {
             >
               <Home className="w-4 h-4 mr-2" />
               Home
+            </Link>
+            <Link
+              to="/billing"
+              className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${location.pathname.startsWith('/billing')
+                  ? 'text-blue-600 bg-blue-50'
+                  : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
+                }`}
+            >
+              <CreditCard className="w-4 h-4 mr-2" />
+              Billing
             </Link>
             {NAV_GROUPS.map((group) => (
               <div key={group.id}>
@@ -309,6 +347,10 @@ export default function Navbar() {
                   { label: 'Signup Requests', to: '/admin/signup-requests' },
                   { label: 'Users', to: '/admin/users' },
                   { label: 'Roles', to: '/admin/roles' },
+                  { label: 'Billing Plans', to: '/admin/billing/plans' },
+                  { label: 'Billing Subscriptions', to: '/admin/billing/subscriptions' },
+                  { label: 'Family Billing Summary', to: '/admin/billing/families' },
+                  { label: 'Billing Actions', to: '/admin/billing/actions' },
                 ].map((item) => (
                   <Link
                     key={item.to}

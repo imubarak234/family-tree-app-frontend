@@ -46,6 +46,16 @@ export function formatFileSize(bytes) {
   return `${size.toFixed(unitIndex === 0 ? 0 : 1)} ${units[unitIndex]}`;
 }
 
+export function formatCurrencyFromKobo(amountKobo, currency = 'NGN') {
+  const amount = Number(amountKobo || 0) / 100;
+  return new Intl.NumberFormat('en-NG', {
+    style: 'currency',
+    currency,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(amount);
+}
+
 export function calculateAge(birthDate) {
   if (!birthDate) return null;
   const today = new Date();

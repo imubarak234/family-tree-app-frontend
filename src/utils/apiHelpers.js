@@ -24,6 +24,7 @@ export function normalizeResponse(response) {
 export function handleApiError(error, defaultMessage) {
   if (error.response) {
     const message = error.response.data?.message;
+    const code = error.response.data?.code || error.response.data?.error?.code || error.response.data?.errorCode;
     const validationErrors = error.response.data?.errors;
 
     const firstValidationMessage = Array.isArray(validationErrors)
@@ -31,6 +32,34 @@ export function handleApiError(error, defaultMessage) {
       : validationErrors && typeof validationErrors === 'object'
         ? Object.values(validationErrors)[0]
         : null;
+
+    if (error.response.status === 400 && code === 'MissingFamilyContext') {
+      return message || 'Please switch to a family context to manage billing.';
+    }
+
+    if (error.response.status === 402 && code === 'SubscriptionRequired') {
+      return message || 'A paid subscription is required for this action.';
+    }
+
+    if (error.response.status === 402 && code === 'EntitlementExceeded') {
+      return message || 'You’ve reached your plan limit. Upgrade to continue.';
+    }
+
+    if (error.response.status === 409 && code === 'TrialAlreadyUsed') {
+      return message || 'This family has already used its free trial.';
+    }
+
+    if (error.response.status === 402 && code === 'PaymentVerificationFailed') {
+      return message || 'Payment verification failed. Please try again.';
+    }
+
+    if (error.response.status === 401 || code === 'InvalidToken' || code === 'Unauthorized') {
+      return message || 'Your session has expired. Please log in again.';
+    }
+
+    if (error.response.status === 403 || code === 'Forbidden') {
+      return message || 'You do not have permission to perform this action.';
+    }
 
     // Map status codes to user-friendly messages
     switch (error.response.status) {

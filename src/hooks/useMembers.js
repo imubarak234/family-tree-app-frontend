@@ -1,8 +1,11 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { familyAPI } from '../api/family';
 import { normalizeResponse, handleApiError } from '../utils/apiHelpers';
+import { registerFamilyScopedCacheClearer } from '../utils/cacheRegistry';
 
 const membersCache = new Map();
+
+registerFamilyScopedCacheClearer(() => membersCache.clear());
 
 function buildCacheKey(filters = {}) {
   return JSON.stringify(
